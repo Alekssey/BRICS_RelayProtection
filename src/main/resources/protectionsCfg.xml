@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<protections>
+    <frequency>50</frequency>
+    <lineProtection>
+        <lineName>W1</lineName>
+        <firstStair>
+            <currentLevel>LOW</currentLevel>
+            <currentLevel>MEDIUM</currentLevel>
+            <currentLevel>HIGH</currentLevel>
+        </firstStair>
+        <secondStair>
+            <currentLevel>LOW</currentLevel>
+            <currentLevel>MEDIUM</currentLevel>
+            <currentLevel>HIGH</currentLevel>
+        </secondStair>
+
+        <firstSvThread>
+            <metaData>
+                <svLostPeriod>5000</svLostPeriod>
+            </metaData>
+            <cfgData ifaceId="\Device\NPF_{0000E19A-6274-4B1B-BD24-1A023E1D0466}" macDst="01:0C:CD:04:00:01" >
+                <measurements>
+                    <item tag="IaVal" type="ia1"/>
+                    <item tag="IbVal" type="ib1"/>
+                    <item tag="IcVal" type="ic1"/>
+                    <item tag="I0Val" type="i01"/>
+                    <item tag="UaVal" type="ua1"/>
+                    <item tag="UbVal" type="ub1"/>
+                    <item tag="UcVal" type="uc1"/>
+                    <item tag="U0Val" type="u01"/>
+                </measurements>
+            </cfgData>
+        </firstSvThread>
+        <secondSvThread>
+            <metaData>
+                <svLostPeriod>5000</svLostPeriod>
+            </metaData>
+            <cfgData ifaceId="\Device\NPF_{0000E19A-6274-4B1B-BD24-1A023E1D0466}" macDst="01:0C:CD:04:00:02" >
+                <measurements>
+                    <item tag="IaVal" type="ia2"/>
+                    <item tag="IbVal" type="ib2"/>
+                    <item tag="IcVal" type="ic2"/>
+                    <item tag="I0Val" type="i02"/>
+                    <item tag="UaVal" type="ua2"/>
+                    <item tag="UbVal" type="ub2"/>
+                    <item tag="UcVal" type="uc2"/>
+                    <item tag="U0Val" type="u02"/>
+                </measurements>
+            </cfgData>
+        </secondSvThread>
+
+    </lineProtection>
+</protections>
