@@ -4,16 +4,19 @@ import ru.mpei.relayprotection.model.enumerations.CrossingType;
 
 public class OftenCrossingBlocker {
     private long prevCrossTime;
+    private boolean status = false;
+    private long timeSetpoint;
 
-    public OftenCrossingBlocker() {
+    public OftenCrossingBlocker(double frequency) {
         this.prevCrossTime = System.currentTimeMillis();
+        this.timeSetpoint = (long) (0.35 * 1000 / frequency);
     }
 
-    public BlockingStatus checkBlocking(CrossingType crossType) {
+    public boolean checkBlocking(CrossingType crossType) {
         if (crossType != CrossingType.NO_CROSSING) {
+            this.status = System.currentTimeMillis() - this.prevCrossTime < timeSetpoint;
             this.prevCrossTime = System.currentTimeMillis();
-            return System.currentTimeMillis() - this.prevCrossTime < 7 ? BlockingStatus.BLOCK : BlockingStatus.UNBLOCKING;
         }
-        return BlockingStatus.UNBLOCKING;
+        return this.status;
     }
 }

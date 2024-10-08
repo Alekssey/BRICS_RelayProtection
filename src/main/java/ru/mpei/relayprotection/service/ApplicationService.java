@@ -1,31 +1,32 @@
 package ru.mpei.relayprotection.service;
 
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
-import org.apache.catalina.core.ApplicationContext;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
-import ru.mpei.relayprotection.model.protection.LineProtection;
-import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
+import ru.mpei.relayprotection.model.protection.RelayProtectionComplex;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ApplicationService {
-//    @Autowired
-//    private CommunicationWithContext springContext;
+    @Autowired
+    private RelayProtectionComplex logicalDevice;
+    @Autowired
+    private ObjectMapper mapper;
 
-//    @PostConstruct
-//    private void parseCfg() {
-//        lookOnBeans();
-//    }
-//    public void lookOnBeans() {
-//        Map<String, SvReceiveRunner> list = CommunicationWithContext.getContext().getBeansOfType(SvReceiveRunner.class);
-//        list.entrySet().forEach(s -> {
-//            System.out.print(s.getKey() + " : " + s.getValue());
-//        });
-//    }
+    public String getTerminalConfiguration() {
+        try {
+            return this.mapper.writeValueAsString(this.logicalDevice.getProtections());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public boolean startProtectionsByLineNames(List<String> linesNames) {
+        // ToDo: start all threads for given protections
+        return true;
+    }
+
 }

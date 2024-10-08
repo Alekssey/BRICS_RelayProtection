@@ -13,6 +13,8 @@ import java.util.List;
 public class ProtectionStairCfg {
     @XmlElement(name = "currentLevel")
     private List<CurrentLevel> availableCurrentLevels;
+    @XmlElement
+    private double setpoint;
 
     @Override
     public String toString() {

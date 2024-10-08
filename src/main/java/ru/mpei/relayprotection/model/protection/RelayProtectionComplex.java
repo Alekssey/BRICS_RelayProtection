@@ -1,9 +1,17 @@
 package ru.mpei.relayprotection.model.protection;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.mpei.relayprotection.model.configuration.CfgRoot;
+import ru.mpei.relayprotection.model.protection.phaseHandling.ChronometricPhaseAnalyzer;
+import ru.mpei.relayprotection.model.protection.phaseHandling.DifferentialPhaseAnalyzer;
+import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
 import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.ChronometricHandler;
 import ru.mpei.relayprotection.model.protection.signalHandling.differential.DifferentialSignalHandler;
@@ -14,10 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class RelayProtectionComplex {
     @Value("${protections.cfg-file.path}")
     private String cfgPath;
-    private List<LineProtection> protections = new ArrayList<>();
+    @Getter
+    private final List<LineProtection> protections = new ArrayList<>();
 
     @PostConstruct
     private void configure() {
@@ -37,35 +47,29 @@ public class RelayProtectionComplex {
                     thread1,
                     thread2);
 
-            SignalHandler stair1side1phaseA = new ChronometricHandler(thread1.getIa());
-            SignalHandler stair1side1phaseB = new ChronometricHandler(thread1.getIb());
-            SignalHandler stair1side1phaseC = new ChronometricHandler(thread1.getIc());
+            PhaseAnalyzer stair1APhaseAnalyzer = new ChronometricPhaseAnalyzer(cfgEl.getFirstStair().getSetpoint(), protection.getFirstStair().getActionManager());
+            PhaseAnalyzer stair1BPhaseAnalyzer = new ChronometricPhaseAnalyzer(cfgEl.getFirstStair().getSetpoint(), protection.getFirstStair().getActionManager());
+            PhaseAnalyzer stair1CPhaseAnalyzer = new ChronometricPhaseAnalyzer(cfgEl.getFirstStair().getSetpoint(), protection.getFirstStair().getActionManager());
 
-            SignalHandler stair1side2phaseA = new ChronometricHandler(thread2.getIa());
-            SignalHandler stair1side2phaseB = new ChronometricHandler(thread2.getIb());
-            SignalHandler stair1side2phaseC = new ChronometricHandler(thread2.getIc());
+            PhaseAnalyzer stair2APhaseAnalyzer = new DifferentialPhaseAnalyzer(cfgEl.getSecondStair().getSetpoint(), protection.getSecondStair().getActionManager());
+            PhaseAnalyzer stair2BPhaseAnalyzer = new DifferentialPhaseAnalyzer(cfgEl.getSecondStair().getSetpoint(), protection.getSecondStair().getActionManager());
+            PhaseAnalyzer stair2CPhaseAnalyzer = new DifferentialPhaseAnalyzer(cfgEl.getSecondStair().getSetpoint(), protection.getSecondStair().getActionManager());
 
-            SignalHandler stair2side1phaseA = new DifferentialSignalHandler(thread1.getIa());
-            SignalHandler stair2side1phaseB = new DifferentialSignalHandler(thread1.getIb());
-            SignalHandler stair2side1phaseC = new DifferentialSignalHandler(thread1.getIc());
+            SignalHandler stair1side1phaseA = new ChronometricHandler(thread1.getIa(), stair1APhaseAnalyzer, cfg.getFrequency());
+            SignalHandler stair1side1phaseB = new ChronometricHandler(thread1.getIb(), stair1BPhaseAnalyzer, cfg.getFrequency());
+            SignalHandler stair1side1phaseC = new ChronometricHandler(thread1.getIc(), stair1CPhaseAnalyzer, cfg.getFrequency());
 
-            SignalHandler stair2side2phaseA = new DifferentialSignalHandler(thread2.getIa());
-            SignalHandler stair2side2phaseB = new DifferentialSignalHandler(thread2.getIb());
-            SignalHandler stair2side2phaseC = new DifferentialSignalHandler(thread2.getIc());
+            SignalHandler stair1side2phaseA = new ChronometricHandler(thread2.getIa(), stair1APhaseAnalyzer, cfg.getFrequency());
+            SignalHandler stair1side2phaseB = new ChronometricHandler(thread2.getIb(), stair1BPhaseAnalyzer, cfg.getFrequency());
+            SignalHandler stair1side2phaseC = new ChronometricHandler(thread2.getIc(), stair1CPhaseAnalyzer, cfg.getFrequency());
 
-            thread1.getIa().addHandler(stair1side1phaseA);
-            thread1.getIb().addHandler(stair1side1phaseB);
-            thread1.getIc().addHandler(stair1side1phaseC);
-            thread1.getIa().addHandler(stair2side1phaseA);
-            thread1.getIb().addHandler(stair2side1phaseB);
-            thread1.getIc().addHandler(stair2side1phaseC);
+            SignalHandler stair2side1phaseA = new DifferentialSignalHandler(thread1.getIa(), stair2APhaseAnalyzer);
+            SignalHandler stair2side1phaseB = new DifferentialSignalHandler(thread1.getIb(), stair2BPhaseAnalyzer);
+            SignalHandler stair2side1phaseC = new DifferentialSignalHandler(thread1.getIc(), stair2CPhaseAnalyzer);
 
-            thread2.getIa().addHandler(stair1side2phaseA);
-            thread2.getIb().addHandler(stair1side2phaseB);
-            thread2.getIc().addHandler(stair1side2phaseC);
-            thread2.getIa().addHandler(stair2side2phaseA);
-            thread2.getIb().addHandler(stair2side2phaseB);
-            thread2.getIc().addHandler(stair2side2phaseC);
+            SignalHandler stair2side2phaseA = new DifferentialSignalHandler(thread2.getIa(), stair2APhaseAnalyzer);
+            SignalHandler stair2side2phaseB = new DifferentialSignalHandler(thread2.getIb(), stair2BPhaseAnalyzer);
+            SignalHandler stair2side2phaseC = new DifferentialSignalHandler(thread2.getIc(), stair2CPhaseAnalyzer);
 
             protection.getFirstStair().getFirstSide().setAPhaseHandler(stair1side1phaseA);
             protection.getFirstStair().getFirstSide().setBPhaseHandler(stair1side1phaseB);
@@ -83,16 +87,15 @@ public class RelayProtectionComplex {
             protection.getSecondStair().getSecondSide().setBPhaseHandler(stair2side2phaseB);
             protection.getSecondStair().getSecondSide().setCPhaseHandler(stair2side2phaseC);
 
-//            thread1.subscribe(protection.getFirstStair());
-//            thread1.subscribe(protection.getSecondStair());
-//            thread2.subscribe(protection.getFirstStair());
-//            thread2.subscribe(protection.getSecondStair());
+            protection.getFirstStair().setAPhaseAnalyzer(stair1APhaseAnalyzer);
+            protection.getFirstStair().setBPhaseAnalyzer(stair1BPhaseAnalyzer);
+            protection.getFirstStair().setCPhaseAnalyzer(stair1CPhaseAnalyzer);
 
-//            System.err.println(protection.getLineName());
-//            System.err.println(protection.getFirstStair());
-//            System.err.println(protection.getSecondStair());
-//            System.err.println(protection.getFirstSvThread().getSvMsgParameters().getMacDst());
-//            System.err.println(protection.getSecondSvThread().getSvMsgParameters().getMacDst());
+            protection.getSecondStair().setAPhaseAnalyzer(stair2APhaseAnalyzer);
+            protection.getSecondStair().setBPhaseAnalyzer(stair2BPhaseAnalyzer);
+            protection.getSecondStair().setCPhaseAnalyzer(stair2CPhaseAnalyzer);
+
+            this.protections.add(protection);
         });
     }
 

@@ -4,20 +4,22 @@
     <lineProtection>
         <lineName>W1</lineName>
         <firstStair>
+            <setpoint>3</setpoint>
             <currentLevel>LOW</currentLevel>
             <currentLevel>MEDIUM</currentLevel>
             <currentLevel>HIGH</currentLevel>
         </firstStair>
         <secondStair>
+            <setpoint>10</setpoint>
             <currentLevel>LOW</currentLevel>
             <currentLevel>MEDIUM</currentLevel>
             <currentLevel>HIGH</currentLevel>
         </secondStair>
 
         <firstSvThread>
-            <metaData>
+            <metadata>
                 <svLostPeriod>5000</svLostPeriod>
-            </metaData>
+            </metadata>
             <cfgData ifaceId="\Device\NPF_{0000E19A-6274-4B1B-BD24-1A023E1D0466}" macDst="01:0C:CD:04:00:01" >
                 <measurements>
                     <item tag="IaVal" type="ia1"/>
@@ -32,9 +34,9 @@
             </cfgData>
         </firstSvThread>
         <secondSvThread>
-            <metaData>
+            <metadata>
                 <svLostPeriod>5000</svLostPeriod>
-            </metaData>
+            </metadata>
             <cfgData ifaceId="\Device\NPF_{0000E19A-6274-4B1B-BD24-1A023E1D0466}" macDst="01:0C:CD:04:00:02" >
                 <measurements>
                     <item tag="IaVal" type="ia2"/>

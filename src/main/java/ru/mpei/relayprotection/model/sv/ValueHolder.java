@@ -1,16 +1,13 @@
 package ru.mpei.relayprotection.model.sv;
 
-import lombok.Data;
-import ru.mpei.relayprotection.model.protection.signalHandling.PhaseAnalyzer;
-import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
 
 public class ValueHolder {
     private double value;
-
-    private final List<SignalHandler> handlers = new ArrayList<>();
+    @Getter
+    @JsonIgnore
+    private final Object locker = new Object();
 
     public double get() {
         return value;
@@ -18,9 +15,9 @@ public class ValueHolder {
 
     public void set(double val) {
         this.value = val;
+        synchronized (this.locker) {
+            this.locker.notifyAll();
+        }
     }
 
-    public void addHandler(SignalHandler handler) {
-        this.handlers.add(handler);
-    }
 }

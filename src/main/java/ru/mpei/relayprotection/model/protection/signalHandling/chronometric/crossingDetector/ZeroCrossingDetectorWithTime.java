@@ -1,17 +1,19 @@
-package ru.mpei.relayprotection.model.protection.signalHandling.chronometric;
+package ru.mpei.relayprotection.model.protection.signalHandling.chronometric.crossingDetector;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.mpei.relayprotection.model.enumerations.CrossingType;
+import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.dto.ZeroCrossDto;
 
 
+@Deprecated
 @NoArgsConstructor
-public class ZeroCrossingDetector {
+public class ZeroCrossingDetectorWithTime{
     private double prevValue;
     @Setter
     private double period = 0.25;
 
-    public ZeroCrossingDetector(double period) {
+    public ZeroCrossingDetectorWithTime(double period) {
         this.period = period;
     }
 
