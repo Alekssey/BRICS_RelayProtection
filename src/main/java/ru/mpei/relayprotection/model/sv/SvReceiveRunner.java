@@ -5,14 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mpei.model.SvAnalyzerData;
 import ru.mpei.model.SvMsgParameters;
 import ru.mpei.network.protocols.sv.receiving.SvReceiver;
-import ru.mpei.relayprotection.model.protection.ProtectionStair;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,8 +20,8 @@ public class SvReceiveRunner {
     private final ScheduledExecutorService connectionChecker = Executors.newSingleThreadScheduledExecutor();
     private final SvAnalyzerData analyzerData;
     private final SvMsgParameters svMsgParameters;
-    private double lastSvStateUpdateTs = 0;
-    private boolean SvConnection = false;
+    private long lastSvStateUpdateTs = 0;
+    private boolean alive = false;
 //    private final List<ProtectionStair> subscribers = new ArrayList<>();
 
     private final ValueHolder ia = new ValueHolder();
@@ -55,8 +48,8 @@ public class SvReceiveRunner {
         connectionChecker.scheduleAtFixedRate(() -> {
             if (System.currentTimeMillis() - lastSvStateUpdateTs > analyzerData.getSvLostPeriod()) {
                 log.error("Sv Data to {} is not actual. last packet was received  {} ms ago.", svMsgParameters.getMacDst(), System.currentTimeMillis() - lastSvStateUpdateTs);
-                SvConnection = false;
-            } else SvConnection = true;
+                alive = false;
+            } else alive = true;
         }, 0, analyzerData.getSvLostPeriod(), TimeUnit.MILLISECONDS);
     }
 

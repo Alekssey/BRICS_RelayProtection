@@ -10,6 +10,7 @@ import ru.mpei.relayprotection.model.enumerations.CrossingType;
 @NoArgsConstructor
 public class SignalStateHolderChronometric {
     private CrossingType crossing;
+    private long crossingTime;
     private boolean blocked;
 
 }

@@ -36,6 +36,7 @@ public class RelayProtectionComplex {
             throw new RuntimeException("Bad configuration");
         }
 
+        // ToDo: добавить проверку наличия ступени в конфигурации и только тогда создавать элементы для нее
         cfg.getLinesProtections().forEach(cfgEl -> {
             SvReceiveRunner thread1 = new SvReceiveRunner(cfgEl.getFirstSvThread().getCfgData(), cfgEl.getFirstSvThread().getMetadata());
             SvReceiveRunner thread2 = new SvReceiveRunner(cfgEl.getSecondSvThread().getCfgData(), cfgEl.getSecondSvThread().getMetadata());
