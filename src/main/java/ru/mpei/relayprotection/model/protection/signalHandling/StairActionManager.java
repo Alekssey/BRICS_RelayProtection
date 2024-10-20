@@ -14,7 +14,7 @@ public class StairActionManager {
     private PhaseAnalyzer phaseC;
     private String tag;
 
-    public void act() {
+    public synchronized void act() {
         StringBuilder sb = new StringBuilder();
         if (this.phaseA.isNeedToAct()) sb.append("phase A damaged. ");
         if (this.phaseB.isNeedToAct()) sb.append("phase B damaged. ");

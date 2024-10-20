@@ -1,5 +1,7 @@
 package ru.mpei.relayprotection.model.protection;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,8 @@ public class RelayProtectionComplex {
     private String cfgPath;
     @Autowired
     private GateWayService gateway;
+    @Autowired
+    private ObjectMapper mapper;
     @Getter
     private final List<LineProtection> protections = new ArrayList<>();
 
@@ -47,8 +51,9 @@ public class RelayProtectionComplex {
             if (cfgEl.getSecondStair() != null) this.configureSecondStair(protection, thread1, thread2, cfgEl);
 
             this.protections.add(protection);
-            log.error("look");
         });
+
+        log.error("look");
     }
 
     private void configureFirstStair(LineProtection protection, SvReceiveRunner thread1, SvReceiveRunner thread2, LineProtectionCfg cfg) {

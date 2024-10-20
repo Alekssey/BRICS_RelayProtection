@@ -21,7 +21,7 @@ public class GateWayService {
     }
 
     public boolean sendCommand(String tag, double value){
-        ResponseEntity<Void> ent = rt.postForEntity(sendUrl, new CommandTO(tag, value + ""), Void.class);
+        ResponseEntity<Void> ent = rt.postForEntity(sendUrl, new CommandTO(tag, String.valueOf(value)), Void.class);
         return ent.getStatusCode().is2xxSuccessful();
     }
 
