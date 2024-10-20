@@ -12,6 +12,10 @@ public class LineProtectionCfg {
     @XmlElement
     private String lineName;
     @XmlElement
+    private double frequency;
+    @XmlElement
+    private String cmdName;
+    @XmlElement
     private ProtectionStairCfg firstStair;
     @XmlElement
     private ProtectionStairCfg secondStair;

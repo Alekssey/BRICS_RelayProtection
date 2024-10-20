@@ -18,8 +18,9 @@ public class LineProtection {
     private SvReceiveRunner firstSvThread;
     private SvReceiveRunner secondSvThread;
 
-//    public LineProtection(SvReceiveRunner firstSvThread, SvReceiveRunner secondSvThread) {
-//        this.firstSvThread = firstSvThread;
-//        this.secondSvThread = secondSvThread;
-//    }
+    public LineProtection(String name, SvReceiveRunner firstSvThread, SvReceiveRunner secondSvThread) {
+        this.lineName = name;
+        this.firstSvThread = firstSvThread;
+        this.secondSvThread = secondSvThread;
+    }
 }

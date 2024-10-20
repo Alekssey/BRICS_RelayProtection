@@ -1,5 +1,7 @@
 package ru.mpei.relayprotection.model.protection.phaseHandling;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
@@ -18,11 +20,9 @@ public class ChronometricPhaseAnalyzer extends PhaseAnalyzer {
     private SvReceiveRunner secondSideSvThread;
     private ChronometricHandler secondSideSignalHandler;
 
-
     public ChronometricPhaseAnalyzer(double setpoint, StairActionManager stairManager) {
         super(setpoint, stairManager);
     }
-
 
     @Override
     protected void analyze() {

@@ -4,7 +4,6 @@ import lombok.Data;
 import ru.mpei.relayprotection.model.enumerations.CurrentLevel;
 import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
-import ru.mpei.relayprotection.model.protection.phaseHandling.ChronometricPhaseAnalyzer;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 public class ProtectionStair {
     private List<CurrentLevel> availableCurrentLevels;
     private LineSide firstSide = new LineSide();
-    private LineSide SecondSide = new LineSide();
+    private LineSide secondSide = new LineSide();
     private PhaseAnalyzer aPhaseAnalyzer;
     private PhaseAnalyzer bPhaseAnalyzer;
     private PhaseAnalyzer cPhaseAnalyzer;
@@ -27,7 +26,7 @@ public class ProtectionStair {
         return "ProtectionStair{" +
                 "availableCurrentLevels=" + availableCurrentLevels +
                 ", firstSide=" + firstSide +
-                ", SecondSide=" + SecondSide +
+                ", SecondSide=" + secondSide +
                 '}';
     }
 }

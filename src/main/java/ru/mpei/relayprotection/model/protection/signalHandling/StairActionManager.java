@@ -1,10 +1,12 @@
 package ru.mpei.relayprotection.model.protection.signalHandling;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.service.GateWayService;
 
 @Slf4j
+@Data
 public class StairActionManager {
     private GateWayService gateway;
     private PhaseAnalyzer phaseA;

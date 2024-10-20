@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <protections>
-    <frequency>50</frequency>
     <lineProtection>
         <lineName>W1</lineName>
+        <frequency>50</frequency>
+        <cmdName>w1_brk</cmdName>
         <firstStair>
             <setpoint>3</setpoint>
             <currentLevel>LOW</currentLevel>
