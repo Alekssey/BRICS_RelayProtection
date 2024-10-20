@@ -1,5 +1,6 @@
 package ru.mpei.relayprotection.model.protection.phaseHandling;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
 
@@ -10,6 +11,8 @@ public abstract class PhaseAnalyzer {
     protected Thread task;
     protected StairActionManager actionManager;
     protected int counter;
+    @Getter
+    protected boolean needToAct = false;
 
 
     public PhaseAnalyzer(double setpoint, StairActionManager actionManager) {

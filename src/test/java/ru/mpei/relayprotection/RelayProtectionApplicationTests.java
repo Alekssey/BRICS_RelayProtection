@@ -123,7 +123,7 @@ class RelayProtectionApplicationTests {
 	}
 
 	@Slf4j
-	private class MyRunnable implements Runnable{
+	private static class MyRunnable implements Runnable{
 		@Override
 
 		public void run() {

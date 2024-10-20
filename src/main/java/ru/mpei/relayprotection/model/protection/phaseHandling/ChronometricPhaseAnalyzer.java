@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
+import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.ChronometricHandler;
 import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.signalState.SignalStateHolderChronometric;
 import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
 
@@ -13,9 +14,9 @@ import java.util.*;
 @Setter
 public class ChronometricPhaseAnalyzer extends PhaseAnalyzer {
     private SvReceiveRunner firstSideSvThread;
-    private SignalStateHolderChronometric firstSideStateHolder;
+    private ChronometricHandler firstSideSignalHandler;
     private SvReceiveRunner secondSideSvThread;
-    private SignalStateHolderChronometric secondSideStateHolder;
+    private ChronometricHandler secondSideSignalHandler;
 
 
     public ChronometricPhaseAnalyzer(double setpoint, StairActionManager stairManager) {
@@ -32,24 +33,26 @@ public class ChronometricPhaseAnalyzer extends PhaseAnalyzer {
             throw new RuntimeException(e);
         }
 
-        if (Math.abs(this.firstSideStateHolder.getCrossingTime() - this.secondSideStateHolder.getCrossingTime()) > this.setpoint) {
-            Pair threadsStatus = this.isThreadsAlive();
-            if (threadsStatus.alive) {
-                // ToDo: notify actionManager
-            } else {
-                log.error("The command to turn off the switch is blocked because {}", threadsStatus.msg);
-            }
+        if (Math.abs(this.firstSideSignalHandler.getStateHolder().getCrossingTime() - this.secondSideSignalHandler.getStateHolder().getCrossingTime()) < this.setpoint) return;
+        Pair threadsStatus = this.isThreadsAlive();
+        if (!threadsStatus.alive) {
+            log.warn("The command to turn off the switch is blocked because {}", threadsStatus.msg);
+            return;
         }
+        if (this.firstSideSignalHandler.getStateHolder().isBlocked() || this.secondSideSignalHandler.getStateHolder().isBlocked()) {
+            log.warn("Turning off blocked because very often crossings detected");
+            return;
+        }
+
+        this.needToAct = true;
+        this.actionManager.act();
+
     }
 
     @Override
     public synchronized void act() {
-        if (this.counter == 0) {
-            this.locker.notify();
-        } else {
-            counter = 0;
-        }
-        this.counter ++;
+        if (this.counter++ == 0) this.locker.notify();
+        else counter = 0;
     }
 
     private Pair isThreadsAlive() {

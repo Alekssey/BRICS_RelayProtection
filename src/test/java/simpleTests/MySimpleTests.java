@@ -10,4 +10,11 @@ public class MySimpleTests {
             System.err.println(System.currentTimeMillis());
         }
     }
+
+    @Test
+    public void plus_plus_test() {
+        int i = 0;
+        System.out.println(i++);
+        System.out.println(i);
+    }
 }

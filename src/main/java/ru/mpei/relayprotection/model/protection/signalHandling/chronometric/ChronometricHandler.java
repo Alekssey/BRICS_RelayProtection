@@ -1,5 +1,6 @@
 package ru.mpei.relayprotection.model.protection.signalHandling.chronometric;
 
+import lombok.Getter;
 import ru.mpei.relayprotection.model.enumerations.CrossingType;
 import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.blockers.OftenCrossingBlocker;
@@ -14,6 +15,7 @@ public class ChronometricHandler extends SignalHandler {
     private final SimpleZeroCrossingDetector zeroCrossingDetector = new SimpleZeroCrossingDetector();
     private final FrequencyFilter filter = new MockFilter();
     private final OftenCrossingBlocker blocker;
+    @Getter
     private final SignalStateHolderChronometric stateHolder = new SignalStateHolderChronometric();
 
 
@@ -30,8 +32,7 @@ public class ChronometricHandler extends SignalHandler {
             this.stateHolder.setCrossing(crossing);
             this.stateHolder.setCrossingTime(System.currentTimeMillis());
             this.stateHolder.setBlocked(this.blocker.checkBlocking(crossing));
+            this.phaseAnalyzer.act();
         }
-//        this.stateHolder.setCrossing(crossing);
-        this.phaseAnalyzer.act();
     }
 }
