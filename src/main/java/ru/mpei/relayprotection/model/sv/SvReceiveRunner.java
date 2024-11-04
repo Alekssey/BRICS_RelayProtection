@@ -1,6 +1,7 @@
 package ru.mpei.relayprotection.model.sv;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.model.SvAnalyzerData;
 import ru.mpei.model.SvMsgParameters;
@@ -22,21 +23,18 @@ public class SvReceiveRunner {
     private final SvMsgParameters svMsgParameters;
     private long lastSvStateUpdateTs = 0;
     private boolean alive = false;
-//    private final List<ProtectionStair> subscribers = new ArrayList<>();
 
     private final ValueHolder ia = new ValueHolder();
     private final ValueHolder ib = new ValueHolder();
     private final ValueHolder ic = new ValueHolder();
 
-//    public SvReceiveRunner configure(SvMsgParameters svMsgParameters, SvAnalyzerData cfg) {
-//        this.svMsgParameters = svMsgParameters;
-//        this.analyzerData = cfg;
-//        return this;
-//    }
+    @Setter
+    private boolean isInWork = false;
 
     public SvReceiveRunner(SvMsgParameters svMsgParameters, SvAnalyzerData cfg) {
         this.svMsgParameters = svMsgParameters;
         this.analyzerData = cfg;
+        this.runSvReceive();
     }
 
     public void runSvReceive() {
@@ -65,24 +63,18 @@ public class SvReceiveRunner {
             if (packet.getSmpCnt() == prevSmp.get()) return;
             prevSmp.set(packet.getSmpCnt());
             lastSvStateUpdateTs = System.currentTimeMillis();
+            if (!this.isInWork) return;
             this.ia.set(packet.getIa().getInstMag().getValue() / 10_000);
             this.ib.set(packet.getIb().getInstMag().getValue() / 10_000);
             this.ic.set(packet.getIc().getInstMag().getValue() / 10_000);
 
-//            this.notifyAllSubscribers();
         });
         try {
             svReceiver.start();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Can not start process SV receiving");
         }
     }
 
-//    public void subscribe(ProtectionStair subscriber) {
-//        this.subscribers.add(subscriber);
-//    }
-//
-//    private void notifyAllSubscribers() {
-//        this.subscribers.forEach(ProtectionStair::action);
-//    }
 }

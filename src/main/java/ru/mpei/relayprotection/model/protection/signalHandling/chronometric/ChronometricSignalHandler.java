@@ -11,7 +11,7 @@ import ru.mpei.relayprotection.model.protection.signalHandling.filters.signal.Mo
 import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
 import ru.mpei.relayprotection.model.sv.ValueHolder;
 
-public class ChronometricHandler extends SignalHandler {
+public class ChronometricSignalHandler extends SignalHandler {
     private final SimpleZeroCrossingDetector zeroCrossingDetector = new SimpleZeroCrossingDetector();
     private final FrequencyFilter filter = new MockFilter();
     private final OftenCrossingBlocker blocker;
@@ -19,7 +19,7 @@ public class ChronometricHandler extends SignalHandler {
     private final SignalStateHolderChronometric stateHolder = new SignalStateHolderChronometric();
 
 
-    public ChronometricHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, double frequency) {
+    public ChronometricSignalHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, double frequency) {
         super(value, phaseAnalyzer);
         this.blocker = new OftenCrossingBlocker(frequency);
     }

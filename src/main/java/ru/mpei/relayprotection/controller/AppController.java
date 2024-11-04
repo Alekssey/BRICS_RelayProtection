@@ -18,9 +18,13 @@ public class AppController {
     }
 
     @PostMapping("/start")
-    public boolean startProtections(@RequestBody List<String> linesNames) {
-        return this.service.startProtectionsByLineNames(linesNames);
+    public void startProtections(@RequestBody List<String> linesNames) {
+        this.service.startProtectionsByLineNames(linesNames);
     }
 
+    @PostMapping
+    public void stopProtections(@RequestBody List<String> linesNames) {
+        this.service.stopProtectionsByLineNames(linesNames);
+    }
 
 }

@@ -16,6 +16,7 @@ public abstract class SignalHandler {
         this.value = value;
         this.phaseAnalyzer = phaseAnalyzer;
         this.task = this.createHandlingTask();
+        this.startHandlingTask();
     }
 
     protected Thread createHandlingTask() {

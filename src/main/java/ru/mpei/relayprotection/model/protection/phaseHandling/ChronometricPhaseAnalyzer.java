@@ -1,24 +1,16 @@
 package ru.mpei.relayprotection.model.protection.phaseHandling;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
-import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.ChronometricHandler;
-import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.signalState.SignalStateHolderChronometric;
+import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.ChronometricSignalHandler;
 import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
-
-import java.util.*;
 
 @Slf4j
 @Setter
 public class ChronometricPhaseAnalyzer extends PhaseAnalyzer {
-    private SvReceiveRunner firstSideSvThread;
-    private ChronometricHandler firstSideSignalHandler;
-    private SvReceiveRunner secondSideSvThread;
-    private ChronometricHandler secondSideSignalHandler;
+    private ChronometricSignalHandler firstSideSignalHandler;
+    private ChronometricSignalHandler secondSideSignalHandler;
 
     public ChronometricPhaseAnalyzer(double setpoint, StairActionManager stairManager) {
         super(setpoint, stairManager);

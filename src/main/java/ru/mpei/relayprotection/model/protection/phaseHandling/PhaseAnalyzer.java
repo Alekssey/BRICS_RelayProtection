@@ -1,8 +1,11 @@
 package ru.mpei.relayprotection.model.protection.phaseHandling;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
+import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.ChronometricSignalHandler;
+import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
 
 @Slf4j
 public abstract class PhaseAnalyzer {
@@ -13,12 +16,17 @@ public abstract class PhaseAnalyzer {
     protected int counter;
     @Getter
     protected boolean needToAct = false;
+    @Setter
+    protected SvReceiveRunner firstSideSvThread;
+    @Setter
+    protected SvReceiveRunner secondSideSvThread;
 
 
     public PhaseAnalyzer(double setpoint, StairActionManager actionManager) {
         this.setpoint = setpoint;
         this.task = this.createAnalyzingTask();
         this.actionManager = actionManager;
+        this.startAnalyzingTask();
     }
 
     protected Thread createAnalyzingTask() {
@@ -44,6 +52,5 @@ public abstract class PhaseAnalyzer {
     protected abstract void analyze();
 
     public abstract void act();
-
 
 }

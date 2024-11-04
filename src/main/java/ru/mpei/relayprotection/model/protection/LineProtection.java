@@ -23,4 +23,13 @@ public class LineProtection {
         this.firstSvThread = firstSvThread;
         this.secondSvThread = secondSvThread;
     }
+
+    public void start() {
+        this.firstSvThread.setInWork(true);
+        this.secondSvThread.setInWork(true);
+    }
+    public void stop() {
+        this.firstSvThread.setInWork(false);
+        this.secondSvThread.setInWork(false);
+    }
 }

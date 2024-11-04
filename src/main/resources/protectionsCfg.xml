@@ -21,7 +21,7 @@
             <metadata>
                 <svLostPeriod>5000</svLostPeriod>
             </metadata>
-            <cfgData ifaceId="\Device\NPF_{0000E19A-6274-4B1B-BD24-1A023E1D0466}" macDst="01:0C:CD:04:00:01" >
+            <cfgData ifaceId="\Device\NPF_{454CACDD-C7B4-4F19-8FEF-8D85C6A2146B}" macDst="01:0C:CD:04:00:01" >
                 <measurements>
                     <item tag="IaVal" type="ia1"/>
                     <item tag="IbVal" type="ib1"/>
@@ -38,7 +38,7 @@
             <metadata>
                 <svLostPeriod>5000</svLostPeriod>
             </metadata>
-            <cfgData ifaceId="\Device\NPF_{0000E19A-6274-4B1B-BD24-1A023E1D0466}" macDst="01:0C:CD:04:00:02" >
+            <cfgData ifaceId="\Device\NPF_{454CACDD-C7B4-4F19-8FEF-8D85C6A2146B}" macDst="01:0C:CD:04:00:02" >
                 <measurements>
                     <item tag="IaVal" type="ia2"/>
                     <item tag="IbVal" type="ib2"/>
