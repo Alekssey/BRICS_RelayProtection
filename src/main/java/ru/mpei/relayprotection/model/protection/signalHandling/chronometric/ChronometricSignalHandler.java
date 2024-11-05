@@ -25,7 +25,7 @@ public class ChronometricSignalHandler extends SignalHandler {
     }
 
     @Override
-    public void handle() {
+    public synchronized void handle() {
         double cleanValue = this.filter.filter(this.value.get());
         CrossingType crossing = this.zeroCrossingDetector.checkCross(cleanValue);
         if (crossing != CrossingType.NO_CROSSING) {

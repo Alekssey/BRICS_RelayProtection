@@ -10,18 +10,18 @@
             <currentLevel>MEDIUM</currentLevel>
             <currentLevel>HIGH</currentLevel>
         </firstStair>
-        <secondStair>
-            <setpoint>10</setpoint>
-            <currentLevel>LOW</currentLevel>
-            <currentLevel>MEDIUM</currentLevel>
-            <currentLevel>HIGH</currentLevel>
-        </secondStair>
+<!--        <secondStair>-->
+<!--            <setpoint>10</setpoint>-->
+<!--            <currentLevel>LOW</currentLevel>-->
+<!--            <currentLevel>MEDIUM</currentLevel>-->
+<!--            <currentLevel>HIGH</currentLevel>-->
+<!--        </secondStair>-->
 
         <firstSvThread>
             <metadata>
                 <svLostPeriod>5000</svLostPeriod>
             </metadata>
-            <cfgData ifaceId="\Device\NPF_{454CACDD-C7B4-4F19-8FEF-8D85C6A2146B}" macDst="01:0C:CD:04:00:01" >
+            <cfgData ifaceId="\Device\NPF_{5B7E40CD-78D3-4884-B86E-F9602F189B56}" macDst="01:0C:CD:04:00:01" >
                 <measurements>
                     <item tag="IaVal" type="ia1"/>
                     <item tag="IbVal" type="ib1"/>
@@ -38,7 +38,7 @@
             <metadata>
                 <svLostPeriod>5000</svLostPeriod>
             </metadata>
-            <cfgData ifaceId="\Device\NPF_{454CACDD-C7B4-4F19-8FEF-8D85C6A2146B}" macDst="01:0C:CD:04:00:02" >
+            <cfgData ifaceId="\Device\NPF_{5B7E40CD-78D3-4884-B86E-F9602F189B56}" macDst="01:0C:CD:04:00:02" >
                 <measurements>
                     <item tag="IaVal" type="ia2"/>
                     <item tag="IbVal" type="ib2"/>

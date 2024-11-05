@@ -22,7 +22,7 @@ public class AppController {
         this.service.startProtectionsByLineNames(linesNames);
     }
 
-    @PostMapping
+    @PostMapping("/stop")
     public void stopProtections(@RequestBody List<String> linesNames) {
         this.service.stopProtectionsByLineNames(linesNames);
     }

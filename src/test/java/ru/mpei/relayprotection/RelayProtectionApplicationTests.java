@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.Async;
 import ru.mpei.relayprotection.model.protection.phaseHandling.ChronometricPhaseAnalyzer;
+import ru.mpei.relayprotection.model.protection.phaseHandling.DifferentialPhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
+import ru.mpei.relayprotection.model.protection.signalHandling.differential.DifferentialSignalHandler;
 import ru.mpei.relayprotection.model.sv.ValueHolder;
 
 import java.util.concurrent.ExecutorService;
@@ -104,6 +106,16 @@ class RelayProtectionApplicationTests {
 		}
 	}
 
+//	@Test
+//	void tryToRunChain() {
+//		StairActionManager stairActionManager = new StairActionManager();
+//		DifferentialPhaseAnalyzer phaseAnalyzer = new DifferentialPhaseAnalyzer(10, stairActionManager);
+//
+//		ValueHolder vh1 = new ValueHolder();
+//		DifferentialSignalHandler signalHandler1 = new DifferentialSignalHandler(vh1, phaseAnalyzer, 80, 50);
+//		ValueHolder vh2 = new ValueHolder();
+//		DifferentialSignalHandler signalHandler2 = new DifferentialSignalHandler(vh2, phaseAnalyzer, 80, 50);
+//	}
 	private class TestHandler extends SignalHandler {
 		public String msg;
 

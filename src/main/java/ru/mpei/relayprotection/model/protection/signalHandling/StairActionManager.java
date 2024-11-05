@@ -29,7 +29,7 @@ public class StairActionManager {
                 if (!response) {
                     try {
                         log.warn("bad response from sending command");
-                        Thread.sleep(1_000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }

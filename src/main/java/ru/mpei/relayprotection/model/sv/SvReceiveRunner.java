@@ -63,6 +63,7 @@ public class SvReceiveRunner {
             if (packet.getSmpCnt() == prevSmp.get()) return;
             prevSmp.set(packet.getSmpCnt());
             lastSvStateUpdateTs = System.currentTimeMillis();
+//            System.out.println("receive measurement: " + packet.getIa().getInstMag().getValue());
             if (!this.isInWork) return;
             this.ia.set(packet.getIa().getInstMag().getValue() / 10_000);
             this.ib.set(packet.getIb().getInstMag().getValue() / 10_000);

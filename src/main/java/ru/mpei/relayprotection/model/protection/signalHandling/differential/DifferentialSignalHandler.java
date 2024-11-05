@@ -18,7 +18,7 @@ public class DifferentialSignalHandler extends SignalHandler {
     }
 
     @Override
-    public void handle() {
+    public synchronized void handle() {
         this.filter.process(this.value, this.instMag);
         this.phaseAnalyzer.act();
     }

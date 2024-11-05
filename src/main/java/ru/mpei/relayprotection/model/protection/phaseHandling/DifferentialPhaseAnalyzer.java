@@ -33,8 +33,10 @@ public class DifferentialPhaseAnalyzer extends PhaseAnalyzer{
     @Override
     public void act() {
         if (this.counter == 1) {
-            this.locker.notify();
             this.counter = 0;
+            synchronized (this.locker) {
+                this.locker.notifyAll();
+            }
         }
         else this.counter++;
     }
@@ -45,7 +47,7 @@ public class DifferentialPhaseAnalyzer extends PhaseAnalyzer{
 
         if (!this.firstSideSvThread.isAlive()) msg.append("First side SV thread is dead. ");
         if (!this.secondSideSvThread.isAlive()) msg.append("Second side SV thread is dead. ");
-        if (msg.capacity() != 0) return new Pair(false, msg.toString());
+        if (!msg.toString().isEmpty()) return new Pair(false, msg.toString());
 
         if (currentTime - this.firstSideSvThread.getLastSvStateUpdateTs() > 1) msg.append("First side SV thread is possible dead. ");
         if (currentTime - this.secondSideSvThread.getLastSvStateUpdateTs() > 1) msg.append("Second side SV thread is possible dead, ");

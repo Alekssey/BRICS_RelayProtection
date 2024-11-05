@@ -101,9 +101,9 @@ public class RelayProtectionComplex {
     private void configureSecondStair(LineProtection protection, SvReceiveRunner thread1, SvReceiveRunner thread2, LineProtectionCfg cfg) {
         ProtectionStair stair = new ProtectionStair(cfg.getSecondStair().getAvailableCurrentLevels());
 
-        stair.setAPhaseAnalyzer(new DifferentialPhaseAnalyzer(cfg.getFirstStair().getSetpoint(), stair.getActionManager()));
-        stair.setBPhaseAnalyzer(new DifferentialPhaseAnalyzer(cfg.getFirstStair().getSetpoint(), stair.getActionManager()));
-        stair.setCPhaseAnalyzer(new DifferentialPhaseAnalyzer(cfg.getFirstStair().getSetpoint(), stair.getActionManager()));
+        stair.setAPhaseAnalyzer(new DifferentialPhaseAnalyzer(cfg.getSecondStair().getSetpoint(), stair.getActionManager()));
+        stair.setBPhaseAnalyzer(new DifferentialPhaseAnalyzer(cfg.getSecondStair().getSetpoint(), stair.getActionManager()));
+        stair.setCPhaseAnalyzer(new DifferentialPhaseAnalyzer(cfg.getSecondStair().getSetpoint(), stair.getActionManager()));
 
         stair.getFirstSide().setAPhaseHandler(new DifferentialSignalHandler(thread1.getIa(), stair.getAPhaseAnalyzer(), 80, cfg.getFrequency()));
         stair.getFirstSide().setBPhaseHandler(new DifferentialSignalHandler(thread1.getIa(), stair.getBPhaseAnalyzer(), 80, cfg.getFrequency()));

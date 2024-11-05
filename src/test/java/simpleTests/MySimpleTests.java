@@ -1,7 +1,14 @@
 package simpleTests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySimpleTests {
     @Test
@@ -40,5 +47,24 @@ public class MySimpleTests {
         System.out.println(t.isAlive());
         Thread.sleep(7_000);
         System.out.println(t.isAlive());
+    }
+
+
+    @Test
+    public void ttt() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> list = List.of("W1");
+        System.out.println(mapper.writeValueAsString(list));
+
+    }
+
+    @Test
+    public void returnFromWhile() {
+        int i = 0;
+        while ( i < 10) {
+            System.out.println(i);
+            if (i == 5) return;
+            i++;
+        }
     }
 }
