@@ -8,8 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ValueHolder {
     private double value;
     @Getter
-    @JsonIgnore
-    private final AtomicInteger locker = new AtomicInteger();
+    private final Object locker = 0;
 
     public double get() {
         return value;
@@ -18,7 +17,7 @@ public class ValueHolder {
     public void set(double val) {
         this.value = val;
         synchronized (this.locker) {
-            this.locker.notifyAll();
+//            this.locker.notifyAll();
         }
     }
 

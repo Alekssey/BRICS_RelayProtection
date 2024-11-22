@@ -47,6 +47,6 @@ public class StairActionManager {
         if (this.phaseC.isNeedToAct()) sb.append("phase C damaged. ");
         log.warn(sb.toString());
         this.protection.stop();
-        if (!this.sendingCommandTask.isAlive()) this.sendingCommandTask.start();
+//        if (!this.sendingCommandTask.isAlive()) this.sendingCommandTask.start();
     }
 }

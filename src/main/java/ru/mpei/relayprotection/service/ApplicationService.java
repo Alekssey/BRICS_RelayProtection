@@ -1,29 +1,19 @@
 package ru.mpei.relayprotection.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.mpei.relayprotection.model.protection.LineProtection;
 import ru.mpei.relayprotection.model.protection.RelayProtectionComplex;
+import ru.mpei.relayprotection.model.sv.SvResponse;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ApplicationService {
     @Autowired
     private RelayProtectionComplex logicalDevice;
-    @Autowired
-    private ObjectMapper mapper;
-
-    public String getTerminalConfiguration() {
-        try {
-            return this.mapper.writeValueAsString(this.logicalDevice.getProtections());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     public void startProtectionsByLineNames(List<String> linesNames) {
         this.logicalDevice.getProtections().stream()
@@ -35,6 +25,17 @@ public class ApplicationService {
         this.logicalDevice.getProtections().stream()
                 .filter(protection -> linesNames.contains(protection.getLineName()))
                 .forEach(LineProtection::stop);
+    }
+
+    public List<SvResponse> getMeasurementsForLine(String lineName, int period) {
+        Optional<LineProtection> protection = this.logicalDevice.getProtections().stream()
+                .filter(lineProtection -> lineProtection.getLineName().equals(lineName))
+                .findAny();
+        if (protection.isEmpty()) return new ArrayList<>();
+        List<SvResponse> responses = new ArrayList<>();
+        responses.add(protection.get().getFirstSvThread().getMeasurementsForPeriod(period));
+        responses.add(protection.get().getSecondSvThread().getMeasurementsForPeriod(period));
+        return responses;
     }
 
 }

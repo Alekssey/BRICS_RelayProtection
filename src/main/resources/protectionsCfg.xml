@@ -5,7 +5,7 @@
         <frequency>50</frequency>
         <cmdName>w1_brk</cmdName>
         <firstStair>
-            <setpoint>3</setpoint>
+            <setpoint>5</setpoint>
             <currentLevel>LOW</currentLevel>
             <currentLevel>MEDIUM</currentLevel>
             <currentLevel>HIGH</currentLevel>
@@ -23,14 +23,14 @@
             </metadata>
             <cfgData ifaceId="\Device\NPF_{5B7E40CD-78D3-4884-B86E-F9602F189B56}" macDst="01:0C:CD:04:00:01" >
                 <measurements>
-                    <item tag="IaVal" type="ia1"/>
-                    <item tag="IbVal" type="ib1"/>
-                    <item tag="IcVal" type="ic1"/>
-                    <item tag="I0Val" type="i01"/>
-                    <item tag="UaVal" type="ua1"/>
-                    <item tag="UbVal" type="ub1"/>
-                    <item tag="UcVal" type="uc1"/>
-                    <item tag="U0Val" type="u01"/>
+                    <item tag="IaVal" type="ia"/>
+                    <item tag="IbVal" type="ib"/>
+                    <item tag="IcVal" type="ic"/>
+                    <item tag="I0Val" type="i0"/>
+                    <item tag="UaVal" type="ua"/>
+                    <item tag="UbVal" type="ub"/>
+                    <item tag="UcVal" type="uc"/>
+                    <item tag="U0Val" type="u0"/>
                 </measurements>
             </cfgData>
         </firstSvThread>
@@ -40,14 +40,14 @@
             </metadata>
             <cfgData ifaceId="\Device\NPF_{5B7E40CD-78D3-4884-B86E-F9602F189B56}" macDst="01:0C:CD:04:00:02" >
                 <measurements>
-                    <item tag="IaVal" type="ia2"/>
-                    <item tag="IbVal" type="ib2"/>
-                    <item tag="IcVal" type="ic2"/>
-                    <item tag="I0Val" type="i02"/>
-                    <item tag="UaVal" type="ua2"/>
-                    <item tag="UbVal" type="ub2"/>
-                    <item tag="UcVal" type="uc2"/>
-                    <item tag="U0Val" type="u02"/>
+                    <item tag="IaVal" type="ia"/>
+                    <item tag="IbVal" type="ib"/>
+                    <item tag="IcVal" type="ic"/>
+                    <item tag="I0Val" type="i0"/>
+                    <item tag="UaVal" type="ua"/>
+                    <item tag="UbVal" type="ub"/>
+                    <item tag="UcVal" type="uc"/>
+                    <item tag="U0Val" type="u0"/>
                 </measurements>
             </cfgData>
         </secondSvThread>

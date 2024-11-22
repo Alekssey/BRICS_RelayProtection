@@ -21,12 +21,18 @@ public class SvReceiveRunner {
     private final ScheduledExecutorService connectionChecker = Executors.newSingleThreadScheduledExecutor();
     private final SvAnalyzerData analyzerData;
     private final SvMsgParameters svMsgParameters;
-    private long lastSvStateUpdateTs = 0;
+    private long lastSvStateUpdateTs = System.currentTimeMillis();
     private boolean alive = false;
 
     private final ValueHolder ia = new ValueHolder();
     private final ValueHolder ib = new ValueHolder();
     private final ValueHolder ic = new ValueHolder();
+
+    private final int maxSize = 12_000;
+    private int index = 0;
+    private final double[] mas_ia = new double[maxSize];
+    private final double[] mas_ib = new double[maxSize];
+    private final double[] mas_ic = new double[maxSize];
 
     @Setter
     private boolean isInWork = false;
@@ -63,11 +69,23 @@ public class SvReceiveRunner {
             if (packet.getSmpCnt() == prevSmp.get()) return;
             prevSmp.set(packet.getSmpCnt());
             lastSvStateUpdateTs = System.currentTimeMillis();
-//            System.out.println("receive measurement: " + packet.getIa().getInstMag().getValue());
+//            System.err.println(this.svMsgParameters.getMacDst() + " receive measurements:"
+//                    + " ia: " + packet.getIa().getInstMag().getValue() / 10_000
+//                    + "; ib: " + packet.getIb().getInstMag().getValue() / 10_000
+//                    + "; ic: " + packet.getIc().getInstMag().getValue() / 10_000);
             if (!this.isInWork) return;
-            this.ia.set(packet.getIa().getInstMag().getValue() / 10_000);
-            this.ib.set(packet.getIb().getInstMag().getValue() / 10_000);
-            this.ic.set(packet.getIc().getInstMag().getValue() / 10_000);
+            double ia = packet.getIa().getInstMag().getValue() / 10_000;
+            double ib = packet.getIb().getInstMag().getValue() / 10_000;
+            double ic = packet.getIc().getInstMag().getValue() / 10_000;
+            this.ia.set(ia);
+            this.ib.set(ib);
+            this.ic.set(ic);
+
+            mas_ia[index] = ia;
+            mas_ib[index] = ib;
+            mas_ic[index] = ic;
+
+            index = index == maxSize - 1 ? 0 : index + 1;
 
         });
         try {
@@ -76,6 +94,28 @@ public class SvReceiveRunner {
             e.printStackTrace();
             throw new RuntimeException("Can not start process SV receiving");
         }
+    }
+
+    public SvResponse getMeasurementsForPeriod(int periodMillis) {
+        int necessaryNumberOfPoint = 80 * periodMillis / 20;
+        int localIndex = index;
+        return new SvResponse(
+                svMsgParameters.getMacDst(),
+                takeNecessaryPartOfArray(necessaryNumberOfPoint, localIndex, mas_ia),
+                takeNecessaryPartOfArray(necessaryNumberOfPoint, localIndex, mas_ib),
+                takeNecessaryPartOfArray(necessaryNumberOfPoint, localIndex, mas_ic)
+        );
+    }
+
+    private double[] takeNecessaryPartOfArray(int necessarySize, int indexToStart, double[] sourceMas) {
+        double[] outBuffer = new double[necessarySize];
+        if (necessarySize <= indexToStart) {
+            System.arraycopy(sourceMas, indexToStart - necessarySize, outBuffer, 0, necessarySize);
+            return outBuffer;
+        }
+        System.arraycopy(sourceMas, 0, outBuffer, necessarySize - indexToStart, indexToStart);
+        System.arraycopy(sourceMas, maxSize - necessarySize + indexToStart, outBuffer, 0, necessarySize - indexToStart);
+        return outBuffer;
     }
 
 }

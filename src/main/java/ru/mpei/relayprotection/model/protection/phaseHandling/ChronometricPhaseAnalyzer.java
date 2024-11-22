@@ -2,6 +2,7 @@ package ru.mpei.relayprotection.model.protection.phaseHandling;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import ru.mpei.relayprotection.model.enumerations.CrossingType;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
 import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.ChronometricSignalHandler;
 import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
@@ -26,7 +27,8 @@ public class ChronometricPhaseAnalyzer extends PhaseAnalyzer {
 //        }
         long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - startTime <  setpoint) {
-            if (this.firstSideSignalHandler.getStateHolder().getCrossing() == this.secondSideSignalHandler.getStateHolder().getCrossing()) return;
+            if ((this.firstSideSignalHandler.getStateHolder().getCrossing() == CrossingType.UP && this.secondSideSignalHandler.getStateHolder().getCrossing() == CrossingType.DOWN)
+                    || (this.firstSideSignalHandler.getStateHolder().getCrossing() == CrossingType.DOWN && this.secondSideSignalHandler.getStateHolder().getCrossing() == CrossingType.UP)) return;
         }
 
 //        if (Math.abs(this.firstSideSignalHandler.getStateHolder().getCrossingTime() - this.secondSideSignalHandler.getStateHolder().getCrossingTime()) < this.setpoint) return;
@@ -41,6 +43,7 @@ public class ChronometricPhaseAnalyzer extends PhaseAnalyzer {
             return;
         }
 
+        log.warn("Find fault");
         this.needToAct = true;
         this.actionManager.act();
 
@@ -63,10 +66,10 @@ public class ChronometricPhaseAnalyzer extends PhaseAnalyzer {
         if (!this.firstSideSvThread.isAlive()) msg.append("First side SV thread is dead. ");
         if (!this.secondSideSvThread.isAlive()) msg.append("Second side SV thread is dead. ");
 //        System.err.println("1 is empty? = " + msg.toString().isEmpty() + "; msg = " + msg.toString() + "; msg capacity: " + msg.capacity());
-        if (!msg.toString().isEmpty()) return new Pair(false, msg.toString());
+//        if (!msg.toString().isEmpty()) return new Pair(false, msg.toString());
 
-        if (currentTime - this.firstSideSvThread.getLastSvStateUpdateTs() >= setpoint) msg.append("First side SV thread is possible dead. ");
-        if (currentTime - this.secondSideSvThread.getLastSvStateUpdateTs() >= setpoint) msg.append("Second side SV thread is possible dead, ");
+//        if (currentTime - this.firstSideSvThread.getLastSvStateUpdateTs() >= setpoint) msg.append("First side SV thread is possible dead. ");
+//        if (currentTime - this.secondSideSvThread.getLastSvStateUpdateTs() >= setpoint) msg.append("Second side SV thread is possible dead, ");
 //        System.err.println("2 is empty? = " + msg.toString().isEmpty() + "; msg = " + msg.toString());
         return new Pair(msg.toString().isEmpty(), msg.toString());
     }
