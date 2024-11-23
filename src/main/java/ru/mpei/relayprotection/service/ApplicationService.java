@@ -38,4 +38,11 @@ public class ApplicationService {
         return responses;
     }
 
+    public List<SvResponse> getMeasurementsForLineFromBuffer(String lineName, int period) {
+        Optional<LineProtection> protection = this.logicalDevice.getProtections().stream()
+                .filter(lineProtection -> lineProtection.getLineName().equals(lineName))
+                .findAny();
+        return protection.isPresent() ? protection.get().getBuffer().getMeasurementsForPeriod(period) : new ArrayList<>();
+    }
+
 }

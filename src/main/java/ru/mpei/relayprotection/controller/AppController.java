@@ -28,4 +28,8 @@ public class AppController {
         return this.service.getMeasurementsForLine(lineName, period);
     }
 
+    @GetMapping("/buffered_measurements")
+    public List<SvResponse> getMeasurementsForLineFromBuffer(@RequestParam String lineName, @RequestParam int period) {
+        return this.service.getMeasurementsForLineFromBuffer(lineName, period);
+    }
 }

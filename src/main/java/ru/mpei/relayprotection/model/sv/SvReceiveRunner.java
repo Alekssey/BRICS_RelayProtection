@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mpei.model.SvAnalyzerData;
 import ru.mpei.model.SvMsgParameters;
 import ru.mpei.network.protocols.sv.receiving.SvReceiver;
+import ru.mpei.relayprotection.model.buffer.MyBuffer;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,6 +29,8 @@ public class SvReceiveRunner {
     private final ValueHolder ib = new ValueHolder();
     private final ValueHolder ic = new ValueHolder();
 
+    private final MyBuffer buffer;
+
     private final int maxSize = 12_000;
     private int index = 0;
     private final double[] mas_ia = new double[maxSize];
@@ -37,7 +40,8 @@ public class SvReceiveRunner {
     @Setter
     private boolean isInWork = false;
 
-    public SvReceiveRunner(SvMsgParameters svMsgParameters, SvAnalyzerData cfg) {
+    public SvReceiveRunner(SvMsgParameters svMsgParameters, SvAnalyzerData cfg, MyBuffer buffer) {
+        this.buffer = buffer;
         this.svMsgParameters = svMsgParameters;
         this.analyzerData = cfg;
         this.runSvReceive();
@@ -73,19 +77,24 @@ public class SvReceiveRunner {
 //                    + " ia: " + packet.getIa().getInstMag().getValue() / 10_000
 //                    + "; ib: " + packet.getIb().getInstMag().getValue() / 10_000
 //                    + "; ic: " + packet.getIc().getInstMag().getValue() / 10_000);
+//            System.err.println(this.svMsgParameters.getMacDst() + " : " + packet);
+
             if (!this.isInWork) return;
+
             double ia = packet.getIa().getInstMag().getValue() / 10_000;
             double ib = packet.getIb().getInstMag().getValue() / 10_000;
             double ic = packet.getIc().getInstMag().getValue() / 10_000;
+
             this.ia.set(ia);
             this.ib.set(ib);
             this.ic.set(ic);
 
-            mas_ia[index] = ia;
-            mas_ib[index] = ib;
-            mas_ic[index] = ic;
+//            mas_ia[index] = ia;
+//            mas_ib[index] = ib;
+//            mas_ic[index] = ic;
+//            index = index == maxSize - 1 ? 0 : index + 1;
+            this.buffer.set(this.svMsgParameters.getMacDst(), ia, ib, ic);
 
-            index = index == maxSize - 1 ? 0 : index + 1;
 
         });
         try {

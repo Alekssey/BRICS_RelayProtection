@@ -17,7 +17,7 @@ public class ValueHolder {
     public void set(double val) {
         this.value = val;
         synchronized (this.locker) {
-//            this.locker.notifyAll();
+            this.locker.notifyAll();
         }
     }
 

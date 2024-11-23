@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.mpei.relayprotection.model.buffer.MyBuffer;
 import ru.mpei.relayprotection.model.configuration.CfgRoot;
 import ru.mpei.relayprotection.model.configuration.LineProtectionCfg;
 import ru.mpei.relayprotection.model.protection.phaseHandling.ChronometricPhaseAnalyzer;
@@ -27,8 +28,6 @@ public class RelayProtectionComplex {
     private String cfgPath;
     @Autowired
     private GateWayService gateway;
-    @Autowired
-    private ObjectMapper mapper;
     @Getter
     private final List<LineProtection> protections = new ArrayList<>();
 
@@ -40,13 +39,14 @@ public class RelayProtectionComplex {
         }
 
         cfg.getLinesProtections().forEach(cfgEl -> {
-            SvReceiveRunner thread1 = new SvReceiveRunner(cfgEl.getFirstSvThread().getCfgData(), cfgEl.getFirstSvThread().getMetadata());
-            SvReceiveRunner thread2 = new SvReceiveRunner(cfgEl.getSecondSvThread().getCfgData(), cfgEl.getSecondSvThread().getMetadata());
-
+            MyBuffer buffer = new MyBuffer(cfgEl.getFirstSvThread().getCfgData().getMacDst(), cfgEl.getSecondSvThread().getCfgData().getMacDst());
+            SvReceiveRunner thread1 = new SvReceiveRunner(cfgEl.getFirstSvThread().getCfgData(), cfgEl.getFirstSvThread().getMetadata(), buffer);
+            SvReceiveRunner thread2 = new SvReceiveRunner(cfgEl.getSecondSvThread().getCfgData(), cfgEl.getSecondSvThread().getMetadata(), buffer);
             LineProtection protection = new LineProtection(
                     cfgEl.getLineName(),
                     thread1,
-                    thread2);
+                    thread2,
+                    buffer);
 
             if (cfgEl.getFirstStair() != null) this.configureFirstStair(protection, thread1, thread2, cfgEl);
             if (cfgEl.getSecondStair() != null) this.configureSecondStair(protection, thread1, thread2, cfgEl);
