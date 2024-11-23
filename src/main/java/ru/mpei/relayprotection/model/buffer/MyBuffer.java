@@ -21,7 +21,7 @@ public class MyBuffer {
         this.mac2 = mac2;
     }
 
-    public synchronized void set(String mac, double v1, double v2, double v3) {
+    public void set(String mac, double v1, double v2, double v3) {
         if (mac.equals(mac1)) {
             side1_mas_ia[index] = v1;
             side1_mas_ib[index] = v2;

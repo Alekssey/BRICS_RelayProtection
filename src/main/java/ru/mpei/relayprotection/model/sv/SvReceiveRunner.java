@@ -85,9 +85,9 @@ public class SvReceiveRunner {
             double ib = packet.getIb().getInstMag().getValue() / 10_000;
             double ic = packet.getIc().getInstMag().getValue() / 10_000;
 
-            this.ia.set(ia);
-            this.ib.set(ib);
-            this.ic.set(ic);
+//            this.ia.set(ia);
+//            this.ib.set(ib);
+//            this.ic.set(ic);
 
 //            mas_ia[index] = ia;
 //            mas_ib[index] = ib;

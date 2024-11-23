@@ -11,12 +11,12 @@ import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @Slf4j
 public class LineProtection {
     private String lineName;
-    private ProtectionStair firstStair;
-    private ProtectionStair secondStair;
+//    private ProtectionStair firstStair;
+//    private ProtectionStair secondStair;
     private SvReceiveRunner firstSvThread;
     private SvReceiveRunner secondSvThread;
     private final MyBuffer buffer;
