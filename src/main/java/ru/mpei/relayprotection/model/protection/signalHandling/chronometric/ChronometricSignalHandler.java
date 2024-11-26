@@ -19,8 +19,8 @@ public class ChronometricSignalHandler extends SignalHandler {
     private final SignalStateHolderChronometric stateHolder = new SignalStateHolderChronometric();
 
 
-    public ChronometricSignalHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, double frequency) {
-        super(value, phaseAnalyzer);
+    public ChronometricSignalHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, Object locker, double frequency) {
+        super(value, phaseAnalyzer, locker);
         this.blocker = new OftenCrossingBlocker(frequency);
     }
 
@@ -28,6 +28,7 @@ public class ChronometricSignalHandler extends SignalHandler {
     public synchronized void handle() {
         double cleanValue = this.filter.filter(this.value.get());
         CrossingType crossing = this.zeroCrossingDetector.checkCross(cleanValue);
+        System.out.println(crossing);
         if (crossing != CrossingType.NO_CROSSING) {
             this.stateHolder.setCrossing(crossing);
             this.stateHolder.setCrossingTime(System.currentTimeMillis());

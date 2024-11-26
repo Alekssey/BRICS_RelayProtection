@@ -16,41 +16,12 @@
 <!--            <currentLevel>MEDIUM</currentLevel>-->
 <!--            <currentLevel>HIGH</currentLevel>-->
 <!--        </secondStair>-->
-
-        <firstSvThread>
-            <metadata>
-                <svLostPeriod>5000</svLostPeriod>
-            </metadata>
-            <cfgData ifaceId="\Device\NPF_{5B7E40CD-78D3-4884-B86E-F9602F189B56}" macDst="01:0C:CD:04:00:01" >
-                <measurements>
-                    <item tag="IaVal" type="ia"/>
-                    <item tag="IbVal" type="ib"/>
-                    <item tag="IcVal" type="ic"/>
-                    <item tag="I0Val" type="i0"/>
-                    <item tag="UaVal" type="ua"/>
-                    <item tag="UbVal" type="ub"/>
-                    <item tag="UcVal" type="uc"/>
-                    <item tag="U0Val" type="u0"/>
-                </measurements>
-            </cfgData>
-        </firstSvThread>
-        <secondSvThread>
-            <metadata>
-                <svLostPeriod>5000</svLostPeriod>
-            </metadata>
-            <cfgData ifaceId="\Device\NPF_{5B7E40CD-78D3-4884-B86E-F9602F189B56}" macDst="01:0C:CD:04:00:02" >
-                <measurements>
-                    <item tag="IaVal" type="ia"/>
-                    <item tag="IbVal" type="ib"/>
-                    <item tag="IcVal" type="ic"/>
-                    <item tag="I0Val" type="i0"/>
-                    <item tag="UaVal" type="ua"/>
-                    <item tag="UbVal" type="ub"/>
-                    <item tag="UcVal" type="uc"/>
-                    <item tag="U0Val" type="u0"/>
-                </measurements>
-            </cfgData>
-        </secondSvThread>
-
+        <SvData>
+            <ifaceDescription>Realtek USB FE Family Controller #2</ifaceDescription>
+            <firstSideMacDst>01:0c:cd:04:00:01</firstSideMacDst>
+            <secondSideMacDst>01:0c:cd:04:00:02</secondSideMacDst>
+            <lostPeriod>5000</lostPeriod>
+            <enableDebug>true</enableDebug>
+        </SvData>
     </lineProtection>
 </protections>

@@ -19,19 +19,18 @@ public class LineProtectionCfg {
     private ProtectionStairCfg firstStair;
     @XmlElement
     private ProtectionStairCfg secondStair;
-    @XmlElement
-    private SvThreadCfg firstSvThread;
-    @XmlElement
-    private SvThreadCfg secondSvThread;
+    @XmlElement(name = "SvData")
+    private SvCfg svData;
 
-    @Override
-    public String toString() {
-        return "LineProtectionCfg{" +
-                "lineName='" + lineName + '\'' +
-                ", firstStair=" + firstStair +
-                ", secondStair=" + secondStair +
-                ", firstSvThread=" + firstSvThread +
-                ", secondSvThread=" + secondSvThread +
-                '}';
-    }
+
+//    @Override
+//    public String toString() {
+//        return "LineProtectionCfg{" +
+//                "lineName='" + lineName + '\'' +
+//                ", firstStair=" + firstStair +
+//                ", secondStair=" + secondStair +
+//                ", firstSvThread=" + firstSvThread +
+//                ", secondSvThread=" + secondSvThread +
+//                '}';
+//    }
 }

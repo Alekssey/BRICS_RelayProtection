@@ -15,10 +15,11 @@ public class ProtectionStair {
     private PhaseAnalyzer aPhaseAnalyzer;
     private PhaseAnalyzer bPhaseAnalyzer;
     private PhaseAnalyzer cPhaseAnalyzer;
-    private StairActionManager actionManager = new StairActionManager();
+    private StairActionManager actionManager;
 
-    public ProtectionStair(List<CurrentLevel> availableCurrentLevels) {
+    public ProtectionStair(List<CurrentLevel> availableCurrentLevels, StairActionManager actionManager) {
         this.availableCurrentLevels = availableCurrentLevels;
+        this.actionManager = actionManager;
     }
 
     @Override

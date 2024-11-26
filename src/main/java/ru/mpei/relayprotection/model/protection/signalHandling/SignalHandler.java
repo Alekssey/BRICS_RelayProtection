@@ -11,20 +11,22 @@ public abstract class SignalHandler {
     protected ValueHolder value;
     protected Thread task;
     protected PhaseAnalyzer phaseAnalyzer;
+    protected final Object locker;
 
-    public SignalHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer) {
+    public SignalHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, Object locker) {
         this.value = value;
         this.phaseAnalyzer = phaseAnalyzer;
         this.task = this.createHandlingTask();
+        this.locker = locker;
         this.startHandlingTask();
     }
 
     protected Thread createHandlingTask() {
         return new Thread(() -> {
             while (true) {
-                synchronized (this.value.getLocker()) {
+                synchronized (this.locker) {
                     try {
-                        this.value.getLocker().wait();
+                        this.locker.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);

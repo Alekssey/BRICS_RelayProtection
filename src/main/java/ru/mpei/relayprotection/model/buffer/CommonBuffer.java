@@ -4,7 +4,7 @@ import ru.mpei.relayprotection.model.sv.SvResponse;
 
 import java.util.List;
 
-public class MyBuffer {
+public class CommonBuffer {
     private final String mac1;
     private final String mac2;
     private final int maxSize = 12_000;
@@ -16,7 +16,7 @@ public class MyBuffer {
     private final double[] side2_mas_ic = new double[maxSize];
     private int index = 0;
 
-    public MyBuffer(String mac1, String mac2) {
+    public CommonBuffer(String mac1, String mac2) {
         this.mac1 = mac1;
         this.mac2 = mac2;
     }

@@ -12,8 +12,8 @@ public class DifferentialSignalHandler extends SignalHandler {
     @Getter
     private final Vector instMag = new Vector();
 
-    public DifferentialSignalHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, int bufferSize, double frequency) {
-        super(value, phaseAnalyzer);
+    public DifferentialSignalHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, Object locker, int bufferSize, double frequency) {
+        super(value, phaseAnalyzer, locker);
         this.filter = new Fourier(bufferSize, frequency);
     }
 

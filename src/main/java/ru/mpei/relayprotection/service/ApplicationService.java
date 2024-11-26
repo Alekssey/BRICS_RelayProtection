@@ -32,9 +32,10 @@ public class ApplicationService {
                 .filter(lineProtection -> lineProtection.getLineName().equals(lineName))
                 .findAny();
         if (protection.isEmpty()) return new ArrayList<>();
-        List<SvResponse> responses = new ArrayList<>();
-        responses.add(protection.get().getFirstSvThread().getMeasurementsForPeriod(period));
-        responses.add(protection.get().getSecondSvThread().getMeasurementsForPeriod(period));
+        List<SvResponse> responses = protection.get().getBuffer().getMeasurementsForPeriod(period);
+//        List<SvResponse> responses = new ArrayList<>();
+//        responses.add(protection.get().getFirstSvThread().getMeasurementsForPeriod(period));
+//        responses.add(protection.get().getSecondSvThread().getMeasurementsForPeriod(period));
         return responses;
     }
 

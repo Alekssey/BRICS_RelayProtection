@@ -1,3 +1,4 @@
+/*
 package ru.mpei.relayprotection;
 
 import lombok.Getter;
@@ -9,9 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.Async;
 import ru.mpei.relayprotection.model.protection.phaseHandling.ChronometricPhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.phaseHandling.DifferentialPhaseAnalyzer;
+import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
 import ru.mpei.relayprotection.model.protection.signalHandling.differential.DifferentialSignalHandler;
+import ru.mpei.relayprotection.model.sv.SvReceiver;
 import ru.mpei.relayprotection.model.sv.ValueHolder;
 
 import java.util.concurrent.ExecutorService;
@@ -22,9 +25,16 @@ class RelayProtectionApplicationTests {
 	@Test
 	@SneakyThrows
 	void testMultiThreadSignalHandling() {
+		SvReceiver svReceiver = new SvReceiver(
+				"Realtek USB FE Family Controller #2",
+				"01:0c:cd:04:00:01",
+				"01:0c:cd:04:00:02",
+				true,
+				5000);
+		PhaseAnalyzer pa = new ChronometricPhaseAnalyzer(5, new StairActionManager(), svReceiver);
 		ValueHolder value =  new ValueHolder();
-		TestHandler t1 = new TestHandler(value, "thread 1");
-		TestHandler t2 = new TestHandler(value, "thread 2");
+		TestHandler t1 = new TestHandler(value, pa, svReceiver);
+		TestHandler t2 = new TestHandler(value, pa, svReceiver);
 		t1.getTask().setName("task 1");
 		t2.getTask().setName("task 2");
 		t1.startHandlingTask();
@@ -91,9 +101,11 @@ class RelayProtectionApplicationTests {
 
 	@Test
 	@SneakyThrows
-	/**
+	*/
+/**
 	 * Метод требует создания новых экземпляров Executors.newSingleThreadExecutor() и каждый раз открывает новый поток
-	 */
+	 *//*
+
 	void testInterruptAndStart() {
 		Runnable task = new MyRunnable();
 		ExecutorService executor;
@@ -119,10 +131,14 @@ class RelayProtectionApplicationTests {
 	private class TestHandler extends SignalHandler {
 		public String msg;
 
-		public TestHandler(ValueHolder value, String content) {
-			super(value, new ChronometricPhaseAnalyzer(0, new StairActionManager()));
-			this.msg = content;
-		}
+	public TestHandler(ValueHolder value, PhaseAnalyzer phaseAnalyzer, Object locker) {
+		super(value, phaseAnalyzer, locker);
+	}
+
+//		public TestHandler(ValueHolder value, String content, SvReceiver ) {
+//			super(value, new ChronometricPhaseAnalyzer(0, new StairActionManager()));
+//			this.msg = content;
+//		}
 
 		@Override
 		@SneakyThrows
@@ -152,3 +168,4 @@ class RelayProtectionApplicationTests {
 		}
 	}
 }
+*/

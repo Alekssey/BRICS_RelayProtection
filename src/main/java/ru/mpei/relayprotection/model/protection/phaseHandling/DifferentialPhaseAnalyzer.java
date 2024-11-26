@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.internalClasses.dataObjects.Vector;
+import ru.mpei.relayprotection.model.sv.SvReceiver;
 
 @Slf4j
 public class DifferentialPhaseAnalyzer extends PhaseAnalyzer{
@@ -12,8 +13,8 @@ public class DifferentialPhaseAnalyzer extends PhaseAnalyzer{
     @Setter
     private Vector secondSideInstMag;
 
-    public DifferentialPhaseAnalyzer(double setpoint, StairActionManager actionManager) {
-        super(setpoint, actionManager);
+    public DifferentialPhaseAnalyzer(double setpoint, StairActionManager actionManager, SvReceiver svReceiver) {
+        super(setpoint, actionManager, svReceiver);
     }
 
     @Override
@@ -42,15 +43,16 @@ public class DifferentialPhaseAnalyzer extends PhaseAnalyzer{
     }
 
     private Pair isThreadsAlive() {
-        long currentTime = System.currentTimeMillis();
         StringBuilder msg = new StringBuilder();
-
-        if (!this.firstSideSvThread.isAlive()) msg.append("First side SV thread is dead. ");
-        if (!this.secondSideSvThread.isAlive()) msg.append("Second side SV thread is dead. ");
+        if (!this.svReceiver.isFirstSvAlive()) msg.append("First SV is dead. ");
+        if (!this.svReceiver.isSecondSvAlive()) msg.append("Second SV is dead");
+//        System.err.println("1 is empty? = " + msg.toString().isEmpty() + "; msg = " + msg.toString() + "; msg capacity: " + msg.capacity());
         if (!msg.toString().isEmpty()) return new Pair(false, msg.toString());
 
-        if (currentTime - this.firstSideSvThread.getLastSvStateUpdateTs() > 1) msg.append("First side SV thread is possible dead. ");
-        if (currentTime - this.secondSideSvThread.getLastSvStateUpdateTs() > 1) msg.append("Second side SV thread is possible dead, ");
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - this.svReceiver.getFirstThreadDataContainer().getLastUpdateTime() >= setpoint) msg.append("First side SV thread is possible dead. ");
+        if (currentTime - this.svReceiver.getSecondThreadDataContainer().getLastUpdateTime() >= setpoint) msg.append("Second side SV thread is possible dead, ");
+//        System.err.println("2 is empty? = " + msg.toString().isEmpty() + "; msg = " + msg.toString());
         return new Pair(msg.toString().isEmpty(), msg.toString());
     }
 

@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mpei.model.SvAnalyzerData;
 import ru.mpei.model.SvMsgParameters;
 import ru.mpei.network.protocols.sv.receiving.SvReceiver;
-import ru.mpei.relayprotection.model.buffer.MyBuffer;
+import ru.mpei.relayprotection.model.buffer.CommonBuffer;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,7 +29,7 @@ public class SvReceiveRunner {
     private final ValueHolder ib = new ValueHolder();
     private final ValueHolder ic = new ValueHolder();
 
-    private final MyBuffer buffer;
+    private final CommonBuffer buffer;
 
     private final int maxSize = 12_000;
     private int index = 0;
@@ -40,7 +40,7 @@ public class SvReceiveRunner {
     @Setter
     private boolean isInWork = false;
 
-    public SvReceiveRunner(SvMsgParameters svMsgParameters, SvAnalyzerData cfg, MyBuffer buffer) {
+    public SvReceiveRunner(SvMsgParameters svMsgParameters, SvAnalyzerData cfg, CommonBuffer buffer) {
         this.buffer = buffer;
         this.svMsgParameters = svMsgParameters;
         this.analyzerData = cfg;

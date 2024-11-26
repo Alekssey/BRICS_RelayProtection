@@ -10,14 +10,16 @@ import ru.mpei.relayprotection.service.GateWayService;
 @Data
 public class StairActionManager {
     private GateWayService gateway;
+    private String tag;
     private PhaseAnalyzer phaseA;
     private PhaseAnalyzer phaseB;
     private PhaseAnalyzer phaseC;
-    private String tag;
     private LineProtection protection;
     private Thread sendingCommandTask;
 
-    public StairActionManager() {
+    public StairActionManager(GateWayService gateway, String cmdName) {
+        this.gateway = gateway;
+        this.tag = cmdName;
         this.configureNotifyingTask();
     }
 

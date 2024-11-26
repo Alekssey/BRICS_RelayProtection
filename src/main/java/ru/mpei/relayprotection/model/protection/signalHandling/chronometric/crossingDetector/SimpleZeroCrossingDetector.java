@@ -8,11 +8,14 @@ import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.dto.
 
 @NoArgsConstructor
 public class SimpleZeroCrossingDetector{
-    private double prevValue;
+    private double prevValue = Double.MIN_VALUE;
 
     public CrossingType checkCross(double val) {
-        ZeroCrossDto ans;
-        if (this.prevValue * val > 0) {
+        if (this.prevValue == Double.MIN_VALUE) {
+            this.prevValue = val;
+            return CrossingType.NO_CROSSING;
+        }
+        if (this.prevValue * val >= 0) {
               return CrossingType.NO_CROSSING;
         }
         return this.prevValue > 0 ? CrossingType.DOWN : CrossingType.UP;

@@ -2,41 +2,33 @@ package ru.mpei.relayprotection.model.protection;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.mpei.relayprotection.model.buffer.MyBuffer;
-import ru.mpei.relayprotection.model.enumerations.CurrentLevel;
+import ru.mpei.relayprotection.model.buffer.CommonBuffer;
 import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
-
-import java.util.List;
+import ru.mpei.relayprotection.model.sv.SvReceiver;
 
 @Data
-@AllArgsConstructor
 @Slf4j
 public class LineProtection {
     private String lineName;
     private ProtectionStair firstStair;
     private ProtectionStair secondStair;
-    private SvReceiveRunner firstSvThread;
-    private SvReceiveRunner secondSvThread;
-    private final MyBuffer buffer;
+    private SvReceiver svReceiver;
+    private final CommonBuffer buffer;
 
-    public LineProtection(String name, SvReceiveRunner firstSvThread, SvReceiveRunner secondSvThread, MyBuffer buffer) {
+    public LineProtection(String name, SvReceiver svReceiver, CommonBuffer buffer) {
         this.lineName = name;
-        this.firstSvThread = firstSvThread;
-        this.secondSvThread = secondSvThread;
+        this.svReceiver = svReceiver;
         this.buffer = buffer;
     }
 
     public void start() {
         log.info("Start protection on {}", this.getLineName());
-        this.firstSvThread.setInWork(true);
-        this.secondSvThread.setInWork(true);
+        this.svReceiver.setAnalyzeActivityStatus(true);
     }
 
     public void stop() {
         log.info("Stop protection on {}", this.getLineName());
-        this.firstSvThread.setInWork(false);
-        this.secondSvThread.setInWork(false);
+        this.svReceiver.setAnalyzeActivityStatus(false);
     }
 }
