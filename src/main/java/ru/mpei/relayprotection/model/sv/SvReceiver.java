@@ -37,7 +37,6 @@ public class SvReceiver {
 
     private final List<ProtectionStair> stairs = new ArrayList<>();
 
-    // ToDo: decrease number of input parameters by placing ready internal objects
     public SvReceiver(String iFaceDesc, String mac1, String mac2, boolean isDebugOn, long svLostPeriod) {
         this.dataContainer = new DataContainer(new CommonBuffer(mac1, mac2));
         this.netCfg = new NetworkSettings(iFaceDesc, mac1, mac2);
@@ -100,41 +99,25 @@ public class SvReceiver {
 //            System.out.println(macDst + "; " + ia + "; " + ib + "; " + ic);
 
             if (macDst.equals(this.netCfg.getMac1())) {
-                this.dataContainer.getFirstThreadDataContainer().setData(ia, ib, ic);
+                this.dataContainer.getFirstThreadDataContainer().setData(ia/10.0, ib/10.0, ic/10.0);
                 firstThreadLifecycle.set();
             } else {
-                this.dataContainer.getSecondThreadDataContainer().setData(ia, ib, ic);
+                this.dataContainer.getSecondThreadDataContainer().setData(ia/10.0, ib/10.0, ic/10.0);
                 secondThreadLifecycle.set();
             }
             if (this.receiverSettings.isDebugEnabled()) this.dataContainer.getBuffer().set(macDst, ia, ib, ic);
             if (firstThreadLifecycle.isHasNewPackets() && secondThreadLifecycle.isHasNewPackets()) {
                 if (this.firstThreadLifecycle.getPacketsCounter() == 1 && this.secondThreadLifecycle.getPacketsCounter() == 1) {
 //                    System.out.println("work");
-                    this.firstThreadLifecycle.reset();
-                    this.secondThreadLifecycle.reset();
                     this.stairs.forEach(ProtectionStair::process);
                 } else {
 //                    System.out.println("actualize");
-                    this.firstThreadLifecycle.reset();
-                    this.secondThreadLifecycle.reset();
                     this.stairs.forEach(ProtectionStair::actualize);
                 }
+                this.firstThreadLifecycle.reset();
+                this.secondThreadLifecycle.reset();
             }
         };
-    }
-
-    private String extractMac(byte[] buffer, int offset) {
-        return String.format("%02x:%02x:%02x:%02x:%02x:%02x",
-                buffer[offset],
-                buffer[offset + 1],
-                buffer[offset + 2],
-                buffer[offset + 3],
-                buffer[offset + 4],
-                buffer[offset + 5]);
-    }
-
-    private int extractValue (byte[] buffer, int offset) {
-        return buffer[offset + 3] & 0xFF | (buffer[offset + 2] & 0xFF) << 8 | (buffer[offset + 1] & 0xFF) << 16 | (buffer[offset] & 0xFF) << 24;
     }
 
     private ScheduledFuture<?> configureSelfDiagnosisTask() {
@@ -155,6 +138,20 @@ public class SvReceiver {
                     this.secondThreadLifecycle.setThreadAlive(true);
                 }
             }, 0, 1000, TimeUnit.MILLISECONDS);
+    }
+
+    private String extractMac(byte[] buffer, int offset) {
+        return String.format("%02x:%02x:%02x:%02x:%02x:%02x",
+                buffer[offset],
+                buffer[offset + 1],
+                buffer[offset + 2],
+                buffer[offset + 3],
+                buffer[offset + 4],
+                buffer[offset + 5]);
+    }
+
+    private int extractValue (byte[] buffer, int offset) {
+        return buffer[offset + 3] & 0xFF | (buffer[offset + 2] & 0xFF) << 8 | (buffer[offset + 1] & 0xFF) << 16 | (buffer[offset] & 0xFF) << 24;
     }
 
 }
