@@ -5,7 +5,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.pcap4j.core.*;
 import ru.mpei.relayprotection.model.buffer.CommonBuffer;
+import ru.mpei.relayprotection.model.protection.ProtectionStair;
+import ru.mpei.relayprotection.model.sv.settings.NetworkSettings;
+import ru.mpei.relayprotection.model.sv.settings.SvReceiverSettings;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -21,6 +26,13 @@ public class SvReceiver {
     private boolean isFirstSvAlive = true; // ToDo: add daemon scheduled task witch will monitor is threads alive
     private boolean isSecondSvAlive = true; // ToDo: add daemon scheduled task witch will monitor is threads alive
 
+    private final SvThreadLifeCycle firstThreadLifecycle = new SvThreadLifeCycle();
+    private final SvThreadLifeCycle secondThreadLifecycle = new SvThreadLifeCycle();
+
+    private final List<ProtectionStair> stairs = new ArrayList<>();
+
+    private int counter;
+
     // ToDo: decrease number of input parameters by placing ready internal objects
     public SvReceiver(String iFaceDesc, String mac1, String mac2, boolean isDebugOn, long svLostPeriod) {
         this.netCfg = new NetworkSettings(iFaceDesc, mac1, mac2);
@@ -28,6 +40,10 @@ public class SvReceiver {
         this.buffer = new CommonBuffer(mac1, mac2);
         this.packetListener = this.createPacketListener();
         this.start();
+    }
+
+    public void subscribeOnPackets(ProtectionStair newSubscriber) {
+        this.stairs.add(newSubscriber);
     }
 
     public void setAnalyzeActivityStatus(boolean newStatus) {
@@ -69,8 +85,8 @@ public class SvReceiver {
     }
     private PacketListener createPacketListener() {
         return packet -> {
-
             if (!this.receiverSettings.isAnalyzeEnabled()) return;
+//            System.out.println("got packet");
             byte[] rawData = packet.getRawData();
             String macDst = this.extractMac(rawData, 0);
             int ia = this.extractValue(rawData, 63);
@@ -79,13 +95,26 @@ public class SvReceiver {
 //            System.out.println(macDst + "; " + ia + "; " + ib + "; " + ic);
 
             if (macDst.equals(this.netCfg.getMac1())) {
-                System.out.println(macDst + "; " + ia + "; " + ib + "; " + ic);
+//                System.out.println(macDst + "; " + ia + "; " + ib + "; " + ic);
                 this.firstThreadDataContainer.setData(ia, ib, ic);
+                firstThreadLifecycle.set();
             } else {
-                System.err.println(macDst + "; " + ia + "; " + ib + "; " + ic);
+//                System.err.println(macDst + "; " + ia + "; " + ib + "; " + ic);
                 this.secondThreadDataContainer.setData(ia, ib, ic);
+                secondThreadLifecycle.set();
             }
             if (this.receiverSettings.isDebugEnabled()) this.buffer.set(macDst, ia, ib, ic);
+            if (firstThreadLifecycle.isHasNewPackets() && secondThreadLifecycle.isHasNewPackets()) {
+                if (this.firstThreadLifecycle.getPacketsCounter() == 1 && this.secondThreadLifecycle.getPacketsCounter() == 1) {
+                    this.firstThreadLifecycle.reset();
+                    this.secondThreadLifecycle.reset();
+//                    System.out.println("work");
+//                    System.out.println(++counter);
+                    this.stairs.forEach(ProtectionStair::process);
+                } else {
+//                    System.out.println("actualize");
+                }
+            }
         };
     }
 
@@ -102,4 +131,5 @@ public class SvReceiver {
     private int extractValue (byte[] buffer, int offset) {
         return buffer[offset + 3] & 0xFF | (buffer[offset + 2] & 0xFF) << 8 | (buffer[offset + 1] & 0xFF) << 16 | (buffer[offset] & 0xFF) << 24;
     }
+
 }

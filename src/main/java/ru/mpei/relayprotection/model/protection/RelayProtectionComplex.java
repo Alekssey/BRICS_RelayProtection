@@ -6,15 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.mpei.relayprotection.model.buffer.CommonBuffer;
 import ru.mpei.relayprotection.model.configuration.CfgRoot;
 import ru.mpei.relayprotection.model.configuration.LineProtectionCfg;
 import ru.mpei.relayprotection.model.protection.phaseHandling.ChronometricPhaseAnalyzer;
-import ru.mpei.relayprotection.model.protection.phaseHandling.DifferentialPhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
 import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.ChronometricSignalHandler;
-import ru.mpei.relayprotection.model.protection.signalHandling.differential.DifferentialSignalHandler;
-import ru.mpei.relayprotection.model.sv.SvReceiveRunner;
 import ru.mpei.relayprotection.model.sv.SvReceiver;
 import ru.mpei.relayprotection.service.GateWayService;
 import ru.mpei.relayprotection.utils.WorkWithCfg;
@@ -50,7 +46,7 @@ public class RelayProtectionComplex {
             LineProtection protection = new LineProtection(cfgEl.getLineName(), svReceiver, svReceiver.getBuffer());
 
             if (cfgEl.getFirstStair() != null) this.configureFirstStair(protection, svReceiver, cfgEl);
-            if (cfgEl.getSecondStair() != null) this.configureSecondStair(protection, svReceiver, cfgEl);
+//            if (cfgEl.getSecondStair() != null) this.configureSecondStair(protection, svReceiver, cfgEl);
 
             this.protections.add(protection);
         });
@@ -59,19 +55,19 @@ public class RelayProtectionComplex {
     }
 
     private void configureFirstStair(LineProtection protection, SvReceiver svReceiver, LineProtectionCfg cfg) {
-        ProtectionStair stair = new ProtectionStair(cfg.getFirstStair().getAvailableCurrentLevels(), new StairActionManager(gateway, cfg.getCmdName()));
+        ProtectionStair stair = new ProtectionStair(cfg.getFirstStair().getAvailableCurrentLevels());
 
-        stair.setAPhaseAnalyzer(new ChronometricPhaseAnalyzer(cfg.getFirstStair().getSetpoint(), stair.getActionManager(), svReceiver));
-        stair.setBPhaseAnalyzer(new ChronometricPhaseAnalyzer(cfg.getFirstStair().getSetpoint(), stair.getActionManager(), svReceiver));
-        stair.setCPhaseAnalyzer(new ChronometricPhaseAnalyzer(cfg.getFirstStair().getSetpoint(), stair.getActionManager(), svReceiver));
+        stair.getFirstSide().setAPhaseHandler(new ChronometricSignalHandler(svReceiver.getFirstThreadDataContainer().getInstIa(), cfg.getFrequency()));
+        stair.getFirstSide().setBPhaseHandler(new ChronometricSignalHandler(svReceiver.getFirstThreadDataContainer().getInstIb(), cfg.getFrequency()));
+        stair.getFirstSide().setCPhaseHandler(new ChronometricSignalHandler(svReceiver.getFirstThreadDataContainer().getInstIc(), cfg.getFrequency()));
 
-        stair.getFirstSide().setAPhaseHandler(new ChronometricSignalHandler(svReceiver.getFirstThreadDataContainer().getInstIa(), stair.getAPhaseAnalyzer(), svReceiver.getFirstThreadDataContainer().getLocker(), cfg.getFrequency()));
-        stair.getFirstSide().setBPhaseHandler(new ChronometricSignalHandler(svReceiver.getFirstThreadDataContainer().getInstIb(), stair.getBPhaseAnalyzer(), svReceiver.getFirstThreadDataContainer().getLocker(), cfg.getFrequency()));
-        stair.getFirstSide().setCPhaseHandler(new ChronometricSignalHandler(svReceiver.getFirstThreadDataContainer().getInstIb(), stair.getCPhaseAnalyzer(), svReceiver.getFirstThreadDataContainer().getLocker(), cfg.getFrequency()));
+        stair.getSecondSide().setAPhaseHandler(new ChronometricSignalHandler(svReceiver.getSecondThreadDataContainer().getInstIa(), cfg.getFrequency()));
+        stair.getSecondSide().setBPhaseHandler(new ChronometricSignalHandler(svReceiver.getSecondThreadDataContainer().getInstIb(), cfg.getFrequency()));
+        stair.getSecondSide().setCPhaseHandler(new ChronometricSignalHandler(svReceiver.getSecondThreadDataContainer().getInstIc(), cfg.getFrequency()));
 
-        stair.getSecondSide().setAPhaseHandler(new ChronometricSignalHandler(svReceiver.getSecondThreadDataContainer().getInstIa(), stair.getAPhaseAnalyzer(), svReceiver.getSecondThreadDataContainer().getLocker(), cfg.getFrequency()));
-        stair.getSecondSide().setBPhaseHandler(new ChronometricSignalHandler(svReceiver.getSecondThreadDataContainer().getInstIb(), stair.getBPhaseAnalyzer(), svReceiver.getSecondThreadDataContainer().getLocker(), cfg.getFrequency()));
-        stair.getSecondSide().setCPhaseHandler(new ChronometricSignalHandler(svReceiver.getSecondThreadDataContainer().getInstIc(), stair.getCPhaseAnalyzer(), svReceiver.getSecondThreadDataContainer().getLocker(), cfg.getFrequency()));
+        stair.setAPhaseAnalyzer(new ChronometricPhaseAnalyzer(cfg.getFirstStair().getSetpoint()));
+        stair.setBPhaseAnalyzer(new ChronometricPhaseAnalyzer(cfg.getFirstStair().getSetpoint()));
+        stair.setCPhaseAnalyzer(new ChronometricPhaseAnalyzer(cfg.getFirstStair().getSetpoint()));
 
         ((ChronometricPhaseAnalyzer) stair.getAPhaseAnalyzer()).setFirstSideSignalHandler((ChronometricSignalHandler) stair.getFirstSide().getAPhaseHandler());
         ((ChronometricPhaseAnalyzer) stair.getAPhaseAnalyzer()).setSecondSideSignalHandler((ChronometricSignalHandler) stair.getSecondSide().getAPhaseHandler());
@@ -82,15 +78,21 @@ public class RelayProtectionComplex {
         ((ChronometricPhaseAnalyzer) stair.getCPhaseAnalyzer()).setFirstSideSignalHandler((ChronometricSignalHandler) stair.getFirstSide().getCPhaseHandler());
         ((ChronometricPhaseAnalyzer) stair.getCPhaseAnalyzer()).setSecondSideSignalHandler((ChronometricSignalHandler) stair.getSecondSide().getCPhaseHandler());
 
-        stair.getActionManager().setPhaseA(stair.getAPhaseAnalyzer());
-        stair.getActionManager().setPhaseB(stair.getBPhaseAnalyzer());
-        stair.getActionManager().setPhaseC(stair.getCPhaseAnalyzer());
-        stair.getActionManager().setProtection(protection);
+        StairActionManager stairManger = new StairActionManager(
+                protection,
+                gateway,
+                cfg.getCmdName(),
+                stair.getAPhaseAnalyzer().getNeedToAct(),
+                stair.getBPhaseAnalyzer().getNeedToAct(),
+                stair.getCPhaseAnalyzer().getNeedToAct());
 
+        stair.setActionManager(stairManger);
+
+        svReceiver.subscribeOnPackets(stair);
         protection.setFirstStair(stair);
     }
 
-    private void configureSecondStair(LineProtection protection, SvReceiver svReceiver, LineProtectionCfg cfg) {
+    /*private void configureSecondStair(LineProtection protection, SvReceiver svReceiver, LineProtectionCfg cfg) {
         ProtectionStair stair = new ProtectionStair(cfg.getSecondStair().getAvailableCurrentLevels(), new StairActionManager(gateway, cfg.getCmdName()));
 
 //        stair.setAPhaseAnalyzer(new DifferentialPhaseAnalyzer(cfg.getSecondStair().getSetpoint(), stair.getActionManager()));
@@ -129,6 +131,6 @@ public class RelayProtectionComplex {
 //        stair.getActionManager().setProtection(protection);
 //
 //        protection.setSecondStair(stair);
-    }
+    }*/
 
 }

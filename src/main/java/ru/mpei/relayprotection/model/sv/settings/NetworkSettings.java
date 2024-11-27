@@ -1,4 +1,4 @@
-package ru.mpei.relayprotection.model.sv;
+package ru.mpei.relayprotection.model.sv.settings;
 
 import lombok.Data;
 

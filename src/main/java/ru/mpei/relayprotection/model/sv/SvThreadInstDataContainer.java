@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class SvThreadInstDataContainer {
-    private final ValueHolder instIa = new ValueHolder();
-    private final ValueHolder instIb = new ValueHolder();
-    private final ValueHolder instIc = new ValueHolder();
+    private final ValueHolder<Double> instIa = new ValueHolder<>();
+    private final ValueHolder<Double> instIb = new ValueHolder<>();
+    private final ValueHolder<Double> instIc = new ValueHolder<>();
     private final Object locker = new Object();
     private long lastUpdateTime;
 

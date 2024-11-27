@@ -1,6 +1,7 @@
 package ru.mpei.relayprotection.model.protection;
 
 import lombok.Data;
+import ru.mpei.relayprotection.model.LogicalNode;
 import ru.mpei.relayprotection.model.enumerations.CurrentLevel;
 import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
@@ -8,7 +9,7 @@ import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManage
 import java.util.List;
 
 @Data
-public class ProtectionStair {
+public class ProtectionStair implements LogicalNode {
     private List<CurrentLevel> availableCurrentLevels;
     private LineSide firstSide = new LineSide();
     private LineSide secondSide = new LineSide();
@@ -17,9 +18,18 @@ public class ProtectionStair {
     private PhaseAnalyzer cPhaseAnalyzer;
     private StairActionManager actionManager;
 
-    public ProtectionStair(List<CurrentLevel> availableCurrentLevels, StairActionManager actionManager) {
+    public ProtectionStair(List<CurrentLevel> availableCurrentLevels) {
         this.availableCurrentLevels = availableCurrentLevels;
-        this.actionManager = actionManager;
+    }
+
+    @Override
+    public void process() {
+        this.firstSide.process();
+        this.secondSide.process();
+        this.aPhaseAnalyzer.process();
+        this.bPhaseAnalyzer.process();
+        this.cPhaseAnalyzer.process();
+        this.actionManager.process();
     }
 
     @Override

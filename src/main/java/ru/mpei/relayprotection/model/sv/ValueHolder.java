@@ -1,12 +1,12 @@
 package ru.mpei.relayprotection.model.sv;
 
-public class ValueHolder {
-    private double value;
-    public double get() {
+public class ValueHolder <T> {
+    private T value;
+    public T get() {
         return value;
     }
 
-    public void set(double val) {
+    public void set(T val) {
         this.value = val;
     }
 

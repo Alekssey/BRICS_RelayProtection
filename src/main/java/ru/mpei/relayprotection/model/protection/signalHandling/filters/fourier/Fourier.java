@@ -38,7 +38,7 @@ public class Fourier {
         }
     }
 
-    public void process(ValueHolder measuredValue, Vector result) {
+    public void process(ValueHolder<Double> measuredValue, Vector result) {
 
         rVal.setValue(rVal.getValue()
                 + (measuredValue.get()

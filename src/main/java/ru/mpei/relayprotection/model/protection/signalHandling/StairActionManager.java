@@ -2,38 +2,46 @@ package ru.mpei.relayprotection.model.protection.signalHandling;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import ru.mpei.relayprotection.model.LogicalNode;
 import ru.mpei.relayprotection.model.protection.LineProtection;
-import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
+import ru.mpei.relayprotection.model.sv.ValueHolder;
 import ru.mpei.relayprotection.service.GateWayService;
 
 @Slf4j
 @Data
-public class StairActionManager {
+public class StairActionManager implements LogicalNode {
     private GateWayService gateway;
     private String tag;
-    private PhaseAnalyzer phaseA;
-    private PhaseAnalyzer phaseB;
-    private PhaseAnalyzer phaseC;
-    private LineProtection protection;
+    private final ValueHolder<Boolean> damagedPhaseA;
+    private final ValueHolder<Boolean> damagedPhaseB;
+    private final ValueHolder<Boolean> damagedPhaseC;
+    private LineProtection parentProtection;
     private Thread sendingCommandTask;
 
-    public StairActionManager(GateWayService gateway, String cmdName) {
+    public StairActionManager(LineProtection parentProtection, GateWayService gateway, String cmdName, ValueHolder<Boolean> phsA, ValueHolder<Boolean> phsB, ValueHolder<Boolean> phsC) {
+        this.parentProtection = parentProtection;
         this.gateway = gateway;
         this.tag = cmdName;
+        this.damagedPhaseA = phsA;
+        this.damagedPhaseB = phsB;
+        this.damagedPhaseC = phsC;
         this.configureNotifyingTask();
     }
 
     private void configureNotifyingTask() {
         this.sendingCommandTask = new Thread(() -> {
             boolean response = false;
+            int commandsCounter = 0;
             while (!response) {
                 response = this.gateway.sendCommand(this.tag, 0);
                 if (!response) {
-                    try {
-                        log.warn("bad response from sending command");
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    log.warn("bad response from sending command");
+                    if (commandsCounter++ > 5) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
@@ -41,14 +49,16 @@ public class StairActionManager {
         });
     }
 
-
-    public synchronized void act() {
+    @Override
+    public synchronized void process() {
         StringBuilder sb = new StringBuilder();
-        if (this.phaseA.isNeedToAct()) sb.append("phase A damaged. ");
-        if (this.phaseB.isNeedToAct()) sb.append("phase B damaged. ");
-        if (this.phaseC.isNeedToAct()) sb.append("phase C damaged. ");
-        log.warn(sb.toString());
-        this.protection.stop();
+        if (this.damagedPhaseA.get()) sb.append("Phase A damaged. ");
+        if (this.damagedPhaseB.get()) sb.append("Phase B damaged. ");
+        if (this.damagedPhaseC.get()) sb.append("Phase C damaged. ");
+        if (!sb.isEmpty()) {
+            log.warn(sb.toString());
+            this.parentProtection.stop();
 //        if (!this.sendingCommandTask.isAlive()) this.sendingCommandTask.start();
+        }
     }
 }
