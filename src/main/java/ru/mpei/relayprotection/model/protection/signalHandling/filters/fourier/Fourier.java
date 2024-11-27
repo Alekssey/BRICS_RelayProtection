@@ -1,11 +1,10 @@
 package ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier;
 
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.internalClasses.common.DataAttribute;
-import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.internalClasses.dataObjects.CMV;
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.internalClasses.dataObjects.ING;
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.internalClasses.dataObjects.MV;
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.internalClasses.dataObjects.Vector;
-import ru.mpei.relayprotection.model.sv.ValueHolder;
+import ru.mpei.relayprotection.model.sv.model.ValueHolder;
 
 /**
  * This class describe Fourier filter. With it help we get rated value of phase current, and it's angle

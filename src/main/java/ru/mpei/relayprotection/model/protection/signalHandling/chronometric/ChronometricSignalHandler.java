@@ -8,14 +8,14 @@ import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.sign
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.signal.FrequencyFilter;
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.signal.MockFilter;
 import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
-import ru.mpei.relayprotection.model.sv.ValueHolder;
+import ru.mpei.relayprotection.model.sv.model.ValueHolder;
 
 public class ChronometricSignalHandler extends SignalHandler {
-    private final FrequencyFilter filter;// = new MockFilter();
-    private final SimpleZeroCrossingDetector zeroCrossingDetector;// = new SimpleZeroCrossingDetector();
+    private final FrequencyFilter filter;
+    private final SimpleZeroCrossingDetector zeroCrossingDetector;
     private final OftenCrossingBlocker blocker;
     @Getter
-    private final SignalStateHolderChronometric stateHolder;// = new SignalStateHolderChronometric();
+    private final SignalStateHolderChronometric stateHolder;
 
 
     public ChronometricSignalHandler(ValueHolder<Double> value, double frequency) {
@@ -27,14 +27,19 @@ public class ChronometricSignalHandler extends SignalHandler {
     }
 
     @Override
-    public synchronized void handle() {
+    public void handle() {
         double cleanValue = this.filter.filter(this.value.get());
         CrossingType crossing = this.zeroCrossingDetector.checkCross(cleanValue);
         if (crossing != CrossingType.NO_CROSSING) {
-//            System.out.println(crossing);
             this.stateHolder.activate(
                     crossing,
                     this.blocker.checkBlocking(crossing));
         }
+    }
+
+    @Override
+    public void actualize() {
+        this.stateHolder.deactivate();
+        this.zeroCrossingDetector.setPrevValue(this.value.get() == null ? 0 : this.value.get());
     }
 }

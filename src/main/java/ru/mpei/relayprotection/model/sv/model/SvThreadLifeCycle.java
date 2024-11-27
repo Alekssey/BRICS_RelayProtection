@@ -1,9 +1,12 @@
-package ru.mpei.relayprotection.model.sv;
+package ru.mpei.relayprotection.model.sv.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class SvThreadLifeCycle {
+    @Setter
+    private boolean isThreadAlive;
     private boolean hasNewPackets;
     private int packetsCounter;
 

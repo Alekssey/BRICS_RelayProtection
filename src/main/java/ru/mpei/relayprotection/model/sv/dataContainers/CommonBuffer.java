@@ -1,6 +1,6 @@
-package ru.mpei.relayprotection.model.buffer;
+package ru.mpei.relayprotection.model.sv.dataContainers;
 
-import ru.mpei.relayprotection.model.sv.SvResponse;
+import ru.mpei.relayprotection.model.sv.model.SvResponse;
 
 import java.util.List;
 

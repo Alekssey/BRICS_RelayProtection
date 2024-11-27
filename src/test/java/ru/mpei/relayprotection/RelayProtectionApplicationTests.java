@@ -15,7 +15,7 @@ import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
 import ru.mpei.relayprotection.model.protection.signalHandling.StairActionManager;
 import ru.mpei.relayprotection.model.protection.signalHandling.differential.DifferentialSignalHandler;
 import ru.mpei.relayprotection.model.sv.SvReceiver;
-import ru.mpei.relayprotection.model.sv.ValueHolder;
+import ru.mpei.relayprotection.model.sv.model.ValueHolder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

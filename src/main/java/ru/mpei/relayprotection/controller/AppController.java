@@ -2,7 +2,7 @@ package ru.mpei.relayprotection.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.mpei.relayprotection.model.sv.SvResponse;
+import ru.mpei.relayprotection.model.sv.model.SvResponse;
 import ru.mpei.relayprotection.service.ApplicationService;
 
 import java.util.List;

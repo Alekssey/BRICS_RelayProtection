@@ -4,41 +4,46 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.pcap4j.core.*;
-import ru.mpei.relayprotection.model.buffer.CommonBuffer;
+import ru.mpei.relayprotection.model.sv.dataContainers.CommonBuffer;
 import ru.mpei.relayprotection.model.protection.ProtectionStair;
+import ru.mpei.relayprotection.model.sv.dataContainers.DataContainer;
+import ru.mpei.relayprotection.model.sv.model.SvThreadLifeCycle;
 import ru.mpei.relayprotection.model.sv.settings.NetworkSettings;
 import ru.mpei.relayprotection.model.sv.settings.SvReceiverSettings;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Getter
 public class SvReceiver {
     private final NetworkSettings netCfg;
     private final SvReceiverSettings receiverSettings;
-    private final SvThreadInstDataContainer firstThreadDataContainer = new SvThreadInstDataContainer();
-    private final SvThreadInstDataContainer secondThreadDataContainer = new SvThreadInstDataContainer();
-    private final CommonBuffer buffer;
+
+    private final DataContainer dataContainer;
+
     private PcapHandle handle;
     private final PacketListener packetListener;
-    private boolean isFirstSvAlive = true; // ToDo: add daemon scheduled task witch will monitor is threads alive
-    private boolean isSecondSvAlive = true; // ToDo: add daemon scheduled task witch will monitor is threads alive
+
+    private final ScheduledFuture<?> selfDiagnosis;
 
     private final SvThreadLifeCycle firstThreadLifecycle = new SvThreadLifeCycle();
     private final SvThreadLifeCycle secondThreadLifecycle = new SvThreadLifeCycle();
 
     private final List<ProtectionStair> stairs = new ArrayList<>();
 
-    private int counter;
-
     // ToDo: decrease number of input parameters by placing ready internal objects
     public SvReceiver(String iFaceDesc, String mac1, String mac2, boolean isDebugOn, long svLostPeriod) {
+        this.dataContainer = new DataContainer(new CommonBuffer(mac1, mac2));
         this.netCfg = new NetworkSettings(iFaceDesc, mac1, mac2);
         this.receiverSettings = new SvReceiverSettings(false, isDebugOn, svLostPeriod);
-        this.buffer = new CommonBuffer(mac1, mac2);
         this.packetListener = this.createPacketListener();
+        this.selfDiagnosis = this.configureSelfDiagnosisTask();
         this.start();
     }
 
@@ -48,6 +53,7 @@ public class SvReceiver {
 
     public void setAnalyzeActivityStatus(boolean newStatus) {
         this.receiverSettings.setAnalyzeEnabled(newStatus);
+        if (newStatus) this.stairs.forEach(ProtectionStair::actualize);
     }
 
     @SneakyThrows
@@ -86,7 +92,6 @@ public class SvReceiver {
     private PacketListener createPacketListener() {
         return packet -> {
             if (!this.receiverSettings.isAnalyzeEnabled()) return;
-//            System.out.println("got packet");
             byte[] rawData = packet.getRawData();
             String macDst = this.extractMac(rawData, 0);
             int ia = this.extractValue(rawData, 63);
@@ -95,24 +100,24 @@ public class SvReceiver {
 //            System.out.println(macDst + "; " + ia + "; " + ib + "; " + ic);
 
             if (macDst.equals(this.netCfg.getMac1())) {
-//                System.out.println(macDst + "; " + ia + "; " + ib + "; " + ic);
-                this.firstThreadDataContainer.setData(ia, ib, ic);
+                this.dataContainer.getFirstThreadDataContainer().setData(ia, ib, ic);
                 firstThreadLifecycle.set();
             } else {
-//                System.err.println(macDst + "; " + ia + "; " + ib + "; " + ic);
-                this.secondThreadDataContainer.setData(ia, ib, ic);
+                this.dataContainer.getSecondThreadDataContainer().setData(ia, ib, ic);
                 secondThreadLifecycle.set();
             }
-            if (this.receiverSettings.isDebugEnabled()) this.buffer.set(macDst, ia, ib, ic);
+            if (this.receiverSettings.isDebugEnabled()) this.dataContainer.getBuffer().set(macDst, ia, ib, ic);
             if (firstThreadLifecycle.isHasNewPackets() && secondThreadLifecycle.isHasNewPackets()) {
                 if (this.firstThreadLifecycle.getPacketsCounter() == 1 && this.secondThreadLifecycle.getPacketsCounter() == 1) {
+//                    System.out.println("work");
                     this.firstThreadLifecycle.reset();
                     this.secondThreadLifecycle.reset();
-//                    System.out.println("work");
-//                    System.out.println(++counter);
                     this.stairs.forEach(ProtectionStair::process);
                 } else {
 //                    System.out.println("actualize");
+                    this.firstThreadLifecycle.reset();
+                    this.secondThreadLifecycle.reset();
+                    this.stairs.forEach(ProtectionStair::actualize);
                 }
             }
         };
@@ -130,6 +135,26 @@ public class SvReceiver {
 
     private int extractValue (byte[] buffer, int offset) {
         return buffer[offset + 3] & 0xFF | (buffer[offset + 2] & 0xFF) << 8 | (buffer[offset + 1] & 0xFF) << 16 | (buffer[offset] & 0xFF) << 24;
+    }
+
+    private ScheduledFuture<?> configureSelfDiagnosisTask() {
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        return ses.scheduleWithFixedDelay(() -> {
+                if (!this.receiverSettings.isAnalyzeEnabled()) return;
+                long now = System.currentTimeMillis();
+                if (now - this.dataContainer.getFirstThreadDataContainer().getLastUpdateTime() > this.receiverSettings.getSvLostPeriod()) {
+                    log.warn("SV data for mac {} is not actual", this.netCfg.getMac1());
+                    this.firstThreadLifecycle.setThreadAlive(false);
+                } else {
+                    this.firstThreadLifecycle.setThreadAlive(true);
+                }
+                if (now - this.dataContainer.getSecondThreadDataContainer().getLastUpdateTime() > this.receiverSettings.getSvLostPeriod()) {
+                    log.warn("SV data for mac {} is not actual", this.netCfg.getMac2());
+                    this.secondThreadLifecycle.setThreadAlive(false);
+                } else {
+                    this.secondThreadLifecycle.setThreadAlive(true);
+                }
+            }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
 }

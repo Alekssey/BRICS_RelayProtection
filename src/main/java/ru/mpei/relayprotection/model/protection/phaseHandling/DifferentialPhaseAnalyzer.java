@@ -31,6 +31,11 @@ public class DifferentialPhaseAnalyzer extends PhaseAnalyzer{
 //        this.actionManager.act();
     }
 
+    @Override
+    public void actualize() {
+
+    }
+
 //    @Override
 //    public void act() {
 //        if (this.counter == 1) {

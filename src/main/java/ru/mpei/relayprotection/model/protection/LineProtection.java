@@ -2,7 +2,7 @@ package ru.mpei.relayprotection.model.protection;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import ru.mpei.relayprotection.model.buffer.CommonBuffer;
+import ru.mpei.relayprotection.model.sv.dataContainers.CommonBuffer;
 import ru.mpei.relayprotection.model.sv.SvReceiver;
 
 @Data

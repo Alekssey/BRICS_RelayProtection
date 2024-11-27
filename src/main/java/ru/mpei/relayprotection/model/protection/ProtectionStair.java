@@ -33,6 +33,17 @@ public class ProtectionStair implements LogicalNode {
     }
 
     @Override
+    public void actualize() {
+        this.firstSide.actualize();
+        this.secondSide.actualize();
+        this.aPhaseAnalyzer.actualize();
+        this.bPhaseAnalyzer.actualize();
+        this.cPhaseAnalyzer.actualize();
+
+        this.actionManager.process();
+    }
+
+    @Override
     public String toString() {
         return "ProtectionStair{" +
                 "availableCurrentLevels=" + availableCurrentLevels +

@@ -1,6 +1,7 @@
-package ru.mpei.relayprotection.model.sv;
+package ru.mpei.relayprotection.model.sv.dataContainers;
 
 import lombok.Getter;
+import ru.mpei.relayprotection.model.sv.model.ValueHolder;
 
 @Getter
 public class SvThreadInstDataContainer {

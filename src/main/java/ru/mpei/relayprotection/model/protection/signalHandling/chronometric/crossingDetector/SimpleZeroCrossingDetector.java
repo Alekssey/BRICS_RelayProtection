@@ -8,6 +8,7 @@ import ru.mpei.relayprotection.model.protection.signalHandling.chronometric.dto.
 
 @NoArgsConstructor
 public class SimpleZeroCrossingDetector{
+    @Setter
     private double prevValue;
 
     public CrossingType checkCross(double val) {

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.mpei.relayprotection.model.protection.LineProtection;
 import ru.mpei.relayprotection.model.protection.RelayProtectionComplex;
-import ru.mpei.relayprotection.model.sv.SvResponse;
+import ru.mpei.relayprotection.model.sv.model.SvResponse;
 
 import java.util.ArrayList;
 import java.util.List;

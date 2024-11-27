@@ -12,8 +12,15 @@ public class LineSide implements LogicalNode {
 
     @Override
     public void process() {
-        aPhaseHandler.handle();
-        bPhaseHandler.handle();
-        cPhaseHandler.handle();
+        this.aPhaseHandler.handle();
+        this.bPhaseHandler.handle();
+        this.cPhaseHandler.handle();
+    }
+
+    @Override
+    public void actualize() {
+        this.aPhaseHandler.actualize();
+        this.bPhaseHandler.actualize();
+        this.cPhaseHandler.actualize();
     }
 }

@@ -5,7 +5,7 @@ import ru.mpei.relayprotection.model.protection.phaseHandling.PhaseAnalyzer;
 import ru.mpei.relayprotection.model.protection.signalHandling.SignalHandler;
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.Fourier;
 import ru.mpei.relayprotection.model.protection.signalHandling.filters.fourier.internalClasses.dataObjects.Vector;
-import ru.mpei.relayprotection.model.sv.ValueHolder;
+import ru.mpei.relayprotection.model.sv.model.ValueHolder;
 
 public class DifferentialSignalHandler extends SignalHandler {
     private final Fourier filter;
@@ -21,5 +21,10 @@ public class DifferentialSignalHandler extends SignalHandler {
     public synchronized void handle() {
         this.filter.process(this.value, this.instMag);
 //        this.phaseAnalyzer.act();
+    }
+
+    @Override
+    public void actualize() {
+
     }
 }

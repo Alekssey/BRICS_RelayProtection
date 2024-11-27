@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import ru.mpei.relayprotection.model.LogicalNode;
 import ru.mpei.relayprotection.model.protection.LineProtection;
-import ru.mpei.relayprotection.model.sv.ValueHolder;
+import ru.mpei.relayprotection.model.sv.model.ValueHolder;
 import ru.mpei.relayprotection.service.GateWayService;
 
 @Slf4j
@@ -25,29 +25,29 @@ public class StairActionManager implements LogicalNode {
         this.damagedPhaseA = phsA;
         this.damagedPhaseB = phsB;
         this.damagedPhaseC = phsC;
-        this.configureNotifyingTask();
+//        this.configureNotifyingTask();
     }
 
-    private void configureNotifyingTask() {
-        this.sendingCommandTask = new Thread(() -> {
-            boolean response = false;
-            int commandsCounter = 0;
-            while (!response) {
-                response = this.gateway.sendCommand(this.tag, 0);
-                if (!response) {
-                    log.warn("bad response from sending command");
-                    if (commandsCounter++ > 5) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-            }
-            this.configureNotifyingTask();
-        });
-    }
+//    private void configureNotifyingTask() {
+//        this.sendingCommandTask = new Thread(() -> {
+//            boolean response = false;
+//            int commandsCounter = 0;
+//            while (!response) {
+//                response = this.gateway.sendCommand(this.tag, 0);
+//                if (!response) {
+//                    log.warn("bad response from sending command");
+//                    if (commandsCounter++ > 5) {
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                }
+//            }
+//            this.configureNotifyingTask();
+//        });
+//    }
 
     @Override
     public synchronized void process() {
@@ -58,7 +58,11 @@ public class StairActionManager implements LogicalNode {
         if (!sb.isEmpty()) {
             log.warn(sb.toString());
             this.parentProtection.stop();
+            this.gateway.sendCommand(this.tag, 0);
 //        if (!this.sendingCommandTask.isAlive()) this.sendingCommandTask.start();
         }
     }
+
+    @Override
+    public void actualize() {}
 }
