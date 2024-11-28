@@ -27,18 +27,6 @@ public class ApplicationService {
                 .forEach(LineProtection::stop);
     }
 
-    public List<SvResponse> getMeasurementsForLine(String lineName, int period) {
-        Optional<LineProtection> protection = this.logicalDevice.getProtections().stream()
-                .filter(lineProtection -> lineProtection.getLineName().equals(lineName))
-                .findAny();
-        if (protection.isEmpty()) return new ArrayList<>();
-        List<SvResponse> responses = protection.get().getBuffer().getMeasurementsForPeriod(period);
-//        List<SvResponse> responses = new ArrayList<>();
-//        responses.add(protection.get().getFirstSvThread().getMeasurementsForPeriod(period));
-//        responses.add(protection.get().getSecondSvThread().getMeasurementsForPeriod(period));
-        return responses;
-    }
-
     public List<SvResponse> getMeasurementsForLineFromBuffer(String lineName, int period) {
         Optional<LineProtection> protection = this.logicalDevice.getProtections().stream()
                 .filter(lineProtection -> lineProtection.getLineName().equals(lineName))
@@ -46,4 +34,11 @@ public class ApplicationService {
         return protection.isPresent() ? protection.get().getBuffer().getMeasurementsForPeriod(period) : new ArrayList<>();
     }
 
+
+    public void turnOffProtection(String lineName) {
+        Optional<LineProtection> protection = this.logicalDevice.getProtections().stream()
+                .filter(lineProtection -> lineProtection.getLineName().equals(lineName))
+                .findAny();
+        protection.ifPresent(lineProtection -> lineProtection.getFirstStair().getActionManager().turnOffFromNeuronNetwork());
+    }
 }

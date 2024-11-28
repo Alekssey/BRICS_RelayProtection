@@ -63,6 +63,17 @@ public class StairActionManager implements LogicalNode {
         }
     }
 
+    public void turnOffFromNeuronNetwork() {
+        if (!this.parentProtection.getSvReceiver().getReceiverSettings().isAnalyzeEnabled()
+                || !this.parentProtection.getSvReceiver().getFirstThreadLifecycle().isThreadAlive()
+                || !this.parentProtection.getSvReceiver().getSecondThreadLifecycle().isThreadAlive()) {
+            log.warn("Turn off from neuron network");
+            this.gateway.sendCommand(this.tag, 0);
+        } else {
+            log.warn("Neuron Network signal blocked");
+        }
+    }
+
     @Override
     public void actualize() {}
 }
