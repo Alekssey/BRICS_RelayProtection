@@ -29,7 +29,9 @@ public class AppController {
     }
 
     @PostMapping("/neuron-network/turn-off")
-    public void turnOffProtection(@RequestBody String lineName) {
-        this.service.turnOffProtection(lineName);
+    public void turnOffProtection(@RequestBody StringContainer lineName) {
+        this.service.turnOffProtection(lineName.str);
     }
+
+    private record StringContainer(String str){}
 }

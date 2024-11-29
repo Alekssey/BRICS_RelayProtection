@@ -137,7 +137,7 @@ public class SvReceiver {
                 } else {
                     this.secondThreadLifecycle.setThreadAlive(true);
                 }
-            }, 0, 1000, TimeUnit.MILLISECONDS);
+            }, 0, this.receiverSettings.getSvLostPeriod() / 2, TimeUnit.MILLISECONDS);
     }
 
     private String extractMac(byte[] buffer, int offset) {
