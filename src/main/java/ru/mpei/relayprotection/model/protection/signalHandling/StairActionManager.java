@@ -58,7 +58,7 @@ public class StairActionManager implements LogicalNode {
         if (!sb.isEmpty()) {
             log.warn(sb.toString());
             this.parentProtection.stop();
-            this.gateway.sendCommand(this.tag, 0);
+            this.gateway.sendCommand(this.tag, 1);
 //        if (!this.sendingCommandTask.isAlive()) this.sendingCommandTask.start();
         }
     }
@@ -68,7 +68,7 @@ public class StairActionManager implements LogicalNode {
                 || !this.parentProtection.getSvReceiver().getFirstThreadLifecycle().isThreadAlive()
                 || !this.parentProtection.getSvReceiver().getSecondThreadLifecycle().isThreadAlive()) {
             log.warn("Turn off from neuron network");
-            this.gateway.sendCommand(this.tag, 0);
+            this.gateway.sendCommand(this.tag, 1);
         } else {
             log.warn("Neuron Network signal blocked");
         }

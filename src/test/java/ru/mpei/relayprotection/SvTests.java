@@ -18,6 +18,6 @@ public class SvTests {
                 5000);
         listener.setAnalyzeActivityStatus(true);
         Thread.sleep(10_000);
-        System.out.println(JsonSerialization.writeAsJson(listener.getBuffer().getMeasurementsForPeriod(30)).get());
+//        System.out.println(JsonSerialization.writeAsJson(listener.getBuffer().getMeasurementsForPeriod(30)).get());
     }
 }

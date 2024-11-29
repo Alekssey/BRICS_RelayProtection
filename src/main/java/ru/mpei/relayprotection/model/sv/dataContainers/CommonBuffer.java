@@ -40,7 +40,7 @@ public class CommonBuffer {
         index = index == maxSize - 1 ? 0 : index + 1;
     }
 
-    public List<SvResponse> getMeasurementsForPeriod(int periodMillis) {
+    public synchronized List<SvResponse> getMeasurementsForPeriod(int periodMillis) {
         int necessaryNumberOfPoint = 80 * periodMillis / 20;
         int localIndex = index;
         return List.of(

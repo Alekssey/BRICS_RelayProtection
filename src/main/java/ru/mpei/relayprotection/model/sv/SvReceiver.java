@@ -37,6 +37,8 @@ public class SvReceiver {
 
     private final List<ProtectionStair> stairs = new ArrayList<>();
 
+    private long startTime = System.currentTimeMillis();
+
     public SvReceiver(String iFaceDesc, String mac1, String mac2, boolean isDebugOn, long svLostPeriod) {
         this.dataContainer = new DataContainer(new CommonBuffer(mac1, mac2));
         this.netCfg = new NetworkSettings(iFaceDesc, mac1, mac2);
@@ -52,7 +54,10 @@ public class SvReceiver {
 
     public void setAnalyzeActivityStatus(boolean newStatus) {
         this.receiverSettings.setAnalyzeEnabled(newStatus);
-        if (newStatus) this.stairs.forEach(ProtectionStair::actualize);
+        if (newStatus) {
+            this.stairs.forEach(ProtectionStair::actualize);
+            this.startTime = System.currentTimeMillis();
+        }
     }
 
     @SneakyThrows
@@ -90,7 +95,7 @@ public class SvReceiver {
     }
     private PacketListener createPacketListener() {
         return packet -> {
-            if (!this.receiverSettings.isAnalyzeEnabled()) return;
+//            if (!this.receiverSettings.isAnalyzeEnabled()) return;
             byte[] rawData = packet.getRawData();
             String macDst = this.extractMac(rawData, 0);
             int ia = this.extractValue(rawData, 63);
@@ -105,9 +110,12 @@ public class SvReceiver {
                 this.dataContainer.getSecondThreadDataContainer().setData(ia/10.0, ib/10.0, ic/10.0);
                 secondThreadLifecycle.set();
             }
-            if (this.receiverSettings.isDebugEnabled()) this.dataContainer.getBuffer().set(macDst, ia, ib, ic);
+            if (this.receiverSettings.isDebugEnabled() && this.receiverSettings.isAnalyzeEnabled()) this.dataContainer.getBuffer().set(macDst, ia, ib, ic);
             if (firstThreadLifecycle.isHasNewPackets() && secondThreadLifecycle.isHasNewPackets()) {
-                if (this.firstThreadLifecycle.getPacketsCounter() == 1 && this.secondThreadLifecycle.getPacketsCounter() == 1) {
+                if (this.receiverSettings.isAnalyzeEnabled()
+                        && this.firstThreadLifecycle.getPacketsCounter() == 1
+                        && this.secondThreadLifecycle.getPacketsCounter() == 1
+                        && (System.currentTimeMillis() - this.startTime) > 1000) {
 //                    System.out.println("work");
                     this.stairs.forEach(ProtectionStair::process);
                 } else {
@@ -123,7 +131,7 @@ public class SvReceiver {
     private ScheduledFuture<?> configureSelfDiagnosisTask() {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
         return ses.scheduleWithFixedDelay(() -> {
-                if (!this.receiverSettings.isAnalyzeEnabled()) return;
+//                if (!this.receiverSettings.isAnalyzeEnabled()) return;
                 long now = System.currentTimeMillis();
                 if (now - this.dataContainer.getFirstThreadDataContainer().getLastUpdateTime() > this.receiverSettings.getSvLostPeriod()) {
                     log.warn("SV data for mac {} is not actual", this.netCfg.getMac1());
