@@ -9,7 +9,7 @@ public class SvThreadInstDataContainer {
     private final ValueHolder<Double> instIb = new ValueHolder<>();
     private final ValueHolder<Double> instIc = new ValueHolder<>();
     private final Object locker = new Object();
-    private long lastUpdateTime;
+    private long lastUpdateTime = System.currentTimeMillis();
 
     public void setData(double ia, double ib, double ic) {
         this.instIa.set(ia);

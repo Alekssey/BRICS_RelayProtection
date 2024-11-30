@@ -23,6 +23,8 @@ public class LineProtection {
     public void start() {
         log.info("Start protection on {}", this.getLineName());
         this.svReceiver.setAnalyzeActivityStatus(true);
+        this.firstStair.getActionManager().setAlreadyOff(false);
+        this.firstStair.getActionManager().setAlreadyOff(false);
     }
 
     public void stop() {

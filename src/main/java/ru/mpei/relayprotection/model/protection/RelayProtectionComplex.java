@@ -51,7 +51,7 @@ public class RelayProtectionComplex {
             this.protections.add(protection);
         });
 
-        log.error("look");
+//        log.error("look");
     }
 
     private void configureFirstStair(LineProtection protection, SvReceiver svReceiver, LineProtectionCfg cfg) {

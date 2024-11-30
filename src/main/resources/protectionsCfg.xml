@@ -17,7 +17,7 @@
 <!--            <currentLevel>HIGH</currentLevel>-->
 <!--        </secondStair>-->
         <SvData>
-            <ifaceDescription>Realtek USB FE Family Controller #2</ifaceDescription>
+            <ifaceDescription>Realtek PCIe GbE Family Controller</ifaceDescription>
             <firstSideMacDst>01:0c:cd:04:00:01</firstSideMacDst>
             <secondSideMacDst>01:0c:cd:04:00:02</secondSideMacDst>
             <lostPeriod>5000</lostPeriod>

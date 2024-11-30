@@ -110,7 +110,7 @@ public class SvReceiver {
                 this.dataContainer.getSecondThreadDataContainer().setData(ia/10.0, ib/10.0, ic/10.0);
                 secondThreadLifecycle.set();
             }
-            if (this.receiverSettings.isDebugEnabled() && this.receiverSettings.isAnalyzeEnabled()) this.dataContainer.getBuffer().set(macDst, ia, ib, ic);
+            if (this.receiverSettings.isDebugEnabled() && this.receiverSettings.isAnalyzeEnabled()) this.dataContainer.getBuffer().set(macDst, ia/10.0, ib/10.0, ic/10.0);
             if (firstThreadLifecycle.isHasNewPackets() && secondThreadLifecycle.isHasNewPackets()) {
                 if (this.receiverSettings.isAnalyzeEnabled()
                         && this.firstThreadLifecycle.getPacketsCounter() == 1

@@ -17,6 +17,7 @@ public class StairActionManager implements LogicalNode {
     private final ValueHolder<Boolean> damagedPhaseC;
     private LineProtection parentProtection;
     private Thread sendingCommandTask;
+    private boolean alreadyOff;
 
     public StairActionManager(LineProtection parentProtection, GateWayService gateway, String cmdName, ValueHolder<Boolean> phsA, ValueHolder<Boolean> phsB, ValueHolder<Boolean> phsC) {
         this.parentProtection = parentProtection;
@@ -58,19 +59,22 @@ public class StairActionManager implements LogicalNode {
         if (!sb.isEmpty()) {
             log.warn(sb.toString());
             this.parentProtection.stop();
+            this.alreadyOff = true;
             this.gateway.sendCommand(this.tag, 1);
 //        if (!this.sendingCommandTask.isAlive()) this.sendingCommandTask.start();
         }
     }
 
     public void turnOffFromNeuronNetwork() {
-        if (!this.parentProtection.getSvReceiver().getReceiverSettings().isAnalyzeEnabled()
+        if (!this.alreadyOff
+                && (!this.parentProtection.getSvReceiver().getReceiverSettings().isAnalyzeEnabled()
                 || !this.parentProtection.getSvReceiver().getFirstThreadLifecycle().isThreadAlive()
-                || !this.parentProtection.getSvReceiver().getSecondThreadLifecycle().isThreadAlive()) {
+                || !this.parentProtection.getSvReceiver().getSecondThreadLifecycle().isThreadAlive())) {
             log.warn("Turn off from neuron network");
+            this.alreadyOff = true;
             this.gateway.sendCommand(this.tag, 1);
         } else {
-            log.warn("Neuron Network signal blocked");
+            log.warn(String.format("Neuron Network signal ignored because line %s already turned off", this.parentProtection.getLineName()));
         }
     }
 
